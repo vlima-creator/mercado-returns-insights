@@ -5,14 +5,13 @@ export function calcularMetricas(vendas: SalesRow[]): Metrics {
   let unidadesTotais = 0;
   let faturamentoProdutos = 0;
   let faturamentoTotal = 0;
-  let faturamentoDevolucoes = 0;
-  let impactoDevolucao = 0;
   let perdaTotal = 0;
   let perdaParcial = 0;
   let saudaveis = 0;
   let criticas = 0;
   let neutras = 0;
   let devolucoesCount = 0;
+  let somaReceitaDevolucoes = 0;
 
   for (const row of vendas) {
     vendasTotais++;
@@ -26,35 +25,36 @@ export function calcularMetricas(vendas: SalesRow[]): Metrics {
 
     if (row._isDevolucao) {
       devolucoesCount++;
-      faturamentoDevolucoes += receitaProd;
+      somaReceitaDevolucoes += Math.abs(receitaProd);
 
-      const reembolso = Math.abs(Number(row['Cancelamentos e reembolsos (BRL)']) || 0);
       const tarifasEnvio = Math.abs(Number(row['Tarifas de envio (BRL)']) || 0);
       const tarifaVenda = Math.abs(Number(row['Tarifa de venda e impostos (BRL)']) || 0);
       const custosParciais = tarifasEnvio + tarifaVenda;
 
-      impactoDevolucao += reembolso;
-
       if (row._classificacao === 'Saudável') {
         saudaveis++;
         // Product returned to stock - partial loss (fees only)
-        perdaTotal += custosParciais;
         perdaParcial += custosParciais;
+        perdaTotal += custosParciais;
       } else if (row._classificacao === 'Crítica') {
         criticas++;
-        // Total loss: reimbursement + fees
-        perdaTotal += reembolso + custosParciais;
+        // Total loss: lost product value + fees
         perdaParcial += custosParciais;
+        perdaTotal += Math.abs(receitaProd) + custosParciais;
       } else {
         neutras++;
         // In progress - count fees as partial
-        perdaTotal += custosParciais;
         perdaParcial += custosParciais;
+        perdaTotal += custosParciais;
       }
     }
   }
 
   const taxaDevolucao = vendasTotais > 0 ? devolucoesCount / vendasTotais : 0;
+
+  // Impacto Financeiro = Preço Médio × Total de Devoluções
+  const precoMedio = devolucoesCount > 0 ? somaReceitaDevolucoes / devolucoesCount : 0;
+  const impactoDevolucao = precoMedio * devolucoesCount; // = somaReceitaDevolucoes
 
   return {
     vendas: vendasTotais,
@@ -63,12 +63,13 @@ export function calcularMetricas(vendas: SalesRow[]): Metrics {
     faturamentoTotal,
     devolucoesVendas: devolucoesCount,
     taxaDevolucao,
-    faturamentoDevolucoes,
+    faturamentoDevolucoes: somaReceitaDevolucoes,
     impactoDevolucao: -Math.abs(impactoDevolucao),
     perdaTotal: -Math.abs(perdaTotal),
     perdaParcial: -Math.abs(perdaParcial),
     saudaveis,
     criticas,
     neutras,
+    precoMedio,
   };
 }

@@ -43,6 +43,7 @@ export interface Metrics {
   saudaveis: number;
   criticas: number;
   neutras: number;
+  precoMedio: number;
 }
 
 export interface FreteAnalysis {
