@@ -4,8 +4,8 @@ import { formatBRL, formatNumber } from '@/lib/formatacao';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function TabFrete() {
-  const { filteredVendas, filteredMatriz, filteredFull } = useAppData();
-  const freteData = analisarFrete(filteredVendas, filteredMatriz, filteredFull);
+  const { filteredVendas } = useAppData();
+  const freteData = analisarFrete(filteredVendas);
 
   if (freteData.length === 0) {
     return <div className="glass-static p-8 text-center text-muted-foreground text-sm">Sem dados de frete disponíveis.</div>;

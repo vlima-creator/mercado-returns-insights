@@ -3,8 +3,8 @@ import { analisarMotivos } from '@/lib/analises';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function TabMotivos() {
-  const { filteredVendas, filteredMatriz, filteredFull } = useAppData();
-  const motivos = analisarMotivos(filteredVendas, filteredMatriz, filteredFull);
+  const { filteredVendas } = useAppData();
+  const motivos = analisarMotivos(filteredVendas);
 
   if (motivos.length === 0) {
     return <div className="glass-static p-8 text-center text-muted-foreground text-sm">Sem dados de motivos disponíveis.</div>;

@@ -4,8 +4,8 @@ import { formatBRL, formatNumber } from '@/lib/formatacao';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 export function TabAds() {
-  const { filteredVendas, filteredMatriz, filteredFull } = useAppData();
-  const adsData = analisarAds(filteredVendas, filteredMatriz, filteredFull);
+  const { filteredVendas } = useAppData();
+  const adsData = analisarAds(filteredVendas);
 
   if (adsData.length === 0) {
     return <div className="glass-static p-8 text-center text-muted-foreground text-sm">Sem dados de publicidade disponíveis.</div>;

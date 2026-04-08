@@ -5,23 +5,20 @@ import { Button } from '@/components/ui/button';
 import { exportarXlsx } from '@/lib/exportXlsx';
 
 export function UploadSidebar() {
-  const { data, loadFiles, resetData, isLoading, error, filteredVendas, filteredMatriz, filteredFull } = useAppData();
+  const { data, loadFile, resetData, isLoading, error, filteredVendas } = useAppData();
   const [vendasFile, setVendasFile] = useState<File | null>(null);
-  const [devolucoesFile, setDevolucoesFile] = useState<File | null>(null);
   const vendasRef = useRef<HTMLInputElement>(null);
-  const devRef = useRef<HTMLInputElement>(null);
 
   const handleProcess = useCallback(async () => {
-    if (!vendasFile || !devolucoesFile) return;
-    const vBuf = await vendasFile.arrayBuffer();
-    const dBuf = await devolucoesFile.arrayBuffer();
-    loadFiles(vBuf, dBuf);
-  }, [vendasFile, devolucoesFile, loadFiles]);
+    if (!vendasFile) return;
+    const buf = await vendasFile.arrayBuffer();
+    loadFile(buf);
+  }, [vendasFile, loadFile]);
 
   const handleExport = useCallback(() => {
     if (!data) return;
-    exportarXlsx(filteredVendas, filteredMatriz, filteredFull);
-  }, [data, filteredVendas, filteredMatriz, filteredFull]);
+    exportarXlsx(filteredVendas);
+  }, [data, filteredVendas]);
 
   return (
     <div className="w-72 min-h-screen border-r border-border bg-sidebar flex flex-col">
@@ -60,35 +57,9 @@ export function UploadSidebar() {
               </>
             )}
           </button>
-        </div>
-
-        <div>
-          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-2">
-            Relatório de Devoluções
-          </label>
-          <input
-            ref={devRef}
-            type="file"
-            accept=".xlsx,.xls"
-            className="hidden"
-            onChange={e => setDevolucoesFile(e.target.files?.[0] || null)}
-          />
-          <button
-            onClick={() => devRef.current?.click()}
-            className="w-full glass-card p-4 flex flex-col items-center gap-2 cursor-pointer hover:border-primary/50 transition-colors"
-          >
-            {devolucoesFile ? (
-              <>
-                <FileSpreadsheet className="h-6 w-6 text-emerald" />
-                <span className="text-xs text-foreground truncate w-full text-center">{devolucoesFile.name}</span>
-              </>
-            ) : (
-              <>
-                <Upload className="h-6 w-6 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Clique para selecionar</span>
-              </>
-            )}
-          </button>
+          <p className="text-[10px] text-muted-foreground mt-1 text-center">
+            Arquivo com aba "Vendas BR"
+          </p>
         </div>
 
         {error && (
@@ -100,30 +71,29 @@ export function UploadSidebar() {
 
         <Button
           onClick={handleProcess}
-          disabled={!vendasFile || !devolucoesFile || isLoading}
+          disabled={!vendasFile || isLoading}
           className="w-full bg-primary hover:bg-primary/80 text-primary-foreground font-semibold"
         >
           {isLoading ? (
             <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Processando...</>
           ) : (
-            'Processar Arquivos'
+            'Processar Arquivo'
           )}
         </Button>
 
         {data && (
           <div className="space-y-3 pt-4 border-t border-border">
             <div className="glass-static p-3 space-y-1">
-              <p className="text-xs text-muted-foreground">Arquivos carregados</p>
+              <p className="text-xs text-muted-foreground">Arquivo carregado</p>
               <p className="text-sm font-mono text-emerald">{data.totalVendas.toLocaleString()} vendas</p>
-              <p className="text-sm font-mono text-royal">{data.totalMatriz.toLocaleString()} dev. matriz</p>
-              <p className="text-sm font-mono text-royal">{data.totalFull.toLocaleString()} dev. full</p>
+              <p className="text-sm font-mono text-coral">{data.totalDevolucoes.toLocaleString()} devoluções</p>
             </div>
 
             <Button onClick={handleExport} variant="outline" className="w-full text-xs">
               <Download className="h-3.5 w-3.5 mr-2" /> Exportar Excel
             </Button>
 
-            <Button onClick={() => { resetData(); setVendasFile(null); setDevolucoesFile(null); }} variant="ghost" className="w-full text-xs text-muted-foreground">
+            <Button onClick={() => { resetData(); setVendasFile(null); }} variant="ghost" className="w-full text-xs text-muted-foreground">
               <RotateCcw className="h-3.5 w-3.5 mr-2" /> Resetar
             </Button>
           </div>

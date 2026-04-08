@@ -7,9 +7,9 @@ import { useState } from 'react';
 type SortKey = 'scoreRisco' | 'taxa' | 'impacto' | 'vendas' | 'devolucoes';
 
 export function TabSkus() {
-  const { filteredVendas, filteredMatriz, filteredFull } = useAppData();
+  const { filteredVendas } = useAppData();
   const [sortBy, setSortBy] = useState<SortKey>('scoreRisco');
-  const skus = analisarSkus(filteredVendas, filteredMatriz, filteredFull, 30);
+  const skus = analisarSkus(filteredVendas, 30);
 
   const sorted = [...skus].sort((a, b) => {
     if (sortBy === 'scoreRisco') return b.scoreRisco - a.scoreRisco;
@@ -40,11 +40,7 @@ export function TabSkus() {
                 <th className="text-left py-2 px-3 text-muted-foreground font-semibold">#</th>
                 <th className="text-left py-2 px-3 text-muted-foreground font-semibold">SKU</th>
                 {(['vendas', 'devolucoes', 'taxa', 'impacto', 'scoreRisco'] as SortKey[]).map(key => (
-                  <th
-                    key={key}
-                    className="text-right py-2 px-3 text-muted-foreground font-semibold cursor-pointer hover:text-foreground transition-colors"
-                    onClick={() => setSortBy(key)}
-                  >
+                  <th key={key} className="text-right py-2 px-3 text-muted-foreground font-semibold cursor-pointer hover:text-foreground transition-colors" onClick={() => setSortBy(key)}>
                     <span className="inline-flex items-center gap-1">
                       {key === 'scoreRisco' ? 'Score' : key === 'devolucoes' ? 'Dev.' : key === 'taxa' ? 'Taxa' : key === 'impacto' ? 'Impacto' : 'Vendas'}
                       {sortBy === key && <ArrowUpDown className="h-3 w-3" />}
@@ -62,9 +58,7 @@ export function TabSkus() {
                   <td className="py-2 px-3 text-right font-mono text-coral">{formatNumber(row.devolucoes)}</td>
                   <td className="py-2 px-3 text-right font-mono">{row.taxa.toFixed(1)}%</td>
                   <td className="py-2 px-3 text-right font-mono text-coral">{formatBRL(row.impacto)}</td>
-                  <td className={`py-2 px-3 text-right font-mono font-bold ${riskColor(row.scoreRisco)}`}>
-                    {row.scoreRisco.toFixed(1)}
-                  </td>
+                  <td className={`py-2 px-3 text-right font-mono font-bold ${riskColor(row.scoreRisco)}`}>{row.scoreRisco.toFixed(1)}</td>
                 </tr>
               ))}
             </tbody>
