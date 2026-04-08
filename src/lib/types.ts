@@ -1,43 +1,32 @@
-// Types for the Mercado Livre returns analysis app
-
 export interface SalesRow {
   'N.º de venda': string;
   'Data da venda': Date | null;
   'SKU': string;
+  'Estado': string;
+  'Descrição do status': string;
   'Receita por produtos (BRL)': number;
   'Receita por envio (BRL)': number;
   'Custo de envio com base nas medidas e peso declarados': number;
   'Tarifa de venda e impostos (BRL)': number;
+  'Tarifas de envio (BRL)': number;
+  'Cancelamentos e reembolsos (BRL)': number;
+  'Total (BRL)': number;
   'Venda por publicidade': string;
   'Forma de entrega': string;
-  'Unidades': number;
-  [key: string]: unknown;
-}
-
-export interface ReturnRow {
-  'N.º de venda': string;
-  'Cancelamentos e reembolsos (BRL)': number;
-  'Tarifa de venda e impostos (BRL)': number;
-  'Tarifas de envio (BRL)': number;
-  'Custo de envio com base nas medidas e peso declarados': number;
-  'Estado': string;
   'Motivo do resultado': string;
-  'Forma de entrega': string;
-  'Canal': string;
-  'Data da venda': Date | null;
-  'Receita por produtos (BRL)': number;
-  'Descrição do status': string;
+  'Unidades': number;
+  // Computed fields
+  _isDevolucao: boolean;
+  _classificacao: 'Saudável' | 'Crítica' | 'Neutra' | 'Nenhuma';
+  _canal: 'Full' | 'Matriz';
   [key: string]: unknown;
 }
 
 export interface ProcessedData {
   vendas: SalesRow[];
-  matriz: ReturnRow[];
-  full: ReturnRow[];
   maxDate: Date;
   totalVendas: number;
-  totalMatriz: number;
-  totalFull: number;
+  totalDevolucoes: number;
 }
 
 export interface Metrics {
@@ -95,14 +84,6 @@ export interface QualidadeArquivo {
     semDataPct: number;
     semReceitaPct: number;
     semSkuPct: number;
-  };
-  matriz: {
-    semEstadoPct: number;
-    semMotivoPct: number;
-  };
-  full: {
-    semEstadoPct: number;
-    semMotivoPct: number;
   };
 }
 
