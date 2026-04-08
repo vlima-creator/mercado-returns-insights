@@ -5,7 +5,7 @@ interface MetricCardProps {
   value: string;
   subvalue?: string;
   icon: LucideIcon;
-  variant?: 'default' | 'success' | 'danger' | 'info';
+  variant?: 'default' | 'success' | 'danger' | 'info' | 'warning';
 }
 
 export function MetricCard({ label, value, subvalue, icon: Icon, variant = 'default' }: MetricCardProps) {
@@ -13,6 +13,7 @@ export function MetricCard({ label, value, subvalue, icon: Icon, variant = 'defa
     default: 'text-foreground',
     success: 'text-emerald',
     danger: 'text-coral',
+    warning: 'text-amber-brand',
     info: 'text-royal',
   }[variant];
 
