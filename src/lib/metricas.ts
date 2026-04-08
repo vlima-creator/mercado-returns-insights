@@ -1,38 +1,7 @@
-import type { SalesRow, ReturnRow, Metrics } from './types';
+import type { SalesRow, Metrics } from './types';
 
-export function classificarEstado(estado: unknown): 'Saudável' | 'Crítica' | 'Neutra' {
-  if (!estado || typeof estado !== 'string') return 'Neutra';
-  const lower = estado.toLowerCase();
-  
-  if (lower.includes('colocamos o produto à venda novamente') ||
-      lower.includes('devolvemos o produto ao comprador') ||
-      lower.includes('reembolsamos o dinheiro')) {
-    return 'Saudável';
-  }
-  
-  if (lower.includes('cancelada') || lower.includes('mediação') ||
-      lower.includes('reclamação') || lower.includes('revisão')) {
-    return 'Crítica';
-  }
-  
-  return 'Neutra';
-}
-
-export function calcularMetricas(
-  vendas: SalesRow[],
-  matriz: ReturnRow[],
-  full: ReturnRow[]
-): Metrics {
-  const todasDev = [...matriz, ...full];
-  const devMap: Record<string, ReturnRow[]> = {};
-  
-  for (const dev of todasDev) {
-    const numVenda = String(dev['N.º de venda'] ?? '');
-    if (!devMap[numVenda]) devMap[numVenda] = [];
-    devMap[numVenda].push(dev);
-  }
-  
-  const vendasTotais = vendas.length;
+export function calcularMetricas(vendas: SalesRow[]): Metrics {
+  let vendasTotais = 0;
   let unidadesTotais = 0;
   let faturamentoProdutos = 0;
   let faturamentoTotal = 0;
@@ -43,58 +12,50 @@ export function calcularMetricas(
   let saudaveis = 0;
   let criticas = 0;
   let neutras = 0;
-  const vendaComDevolucao = new Set<string>();
-  
-  for (const venda of vendas) {
-    const unidades = Number(venda['Unidades']) || 1;
+  let devolucoesCount = 0;
+
+  for (const row of vendas) {
+    vendasTotais++;
+    const unidades = Number(row['Unidades']) || 1;
     unidadesTotais += unidades;
-    
-    const receitaProd = Number(venda['Receita por produtos (BRL)']) || 0;
-    const receitaEnv = Number(venda['Receita por envio (BRL)']) || 0;
-    
+
+    const receitaProd = Number(row['Receita por produtos (BRL)']) || 0;
+    const receitaEnv = Number(row['Receita por envio (BRL)']) || 0;
     faturamentoProdutos += receitaProd;
     faturamentoTotal += receitaProd + receitaEnv;
-    
-    const numVenda = String(venda['N.º de venda'] ?? '');
-    
-    if (devMap[numVenda]) {
-      vendaComDevolucao.add(numVenda);
+
+    if (row._isDevolucao) {
+      devolucoesCount++;
       faturamentoDevolucoes += receitaProd;
-      
-      for (const dev of devMap[numVenda]) {
-        let reembolso = Number(dev['Cancelamentos e reembolsos (BRL)']) || 0;
-        if (reembolso === 0) {
-          reembolso = Number(dev['Receita por produtos (BRL)']) || 0;
-        }
-        
-        const tarifasEnvio = Number(dev['Tarifas de envio (BRL)']) || 0;
-        const tarifaVenda = Number(dev['Tarifa de venda e impostos (BRL)']) || 0;
-        const perdaParcialItem = tarifasEnvio + tarifaVenda;
-        
-        const classe = classificarEstado(dev['Estado']);
-        let perdaTotalItem = 0;
-        
-        if (classe === 'Saudável') {
-          saudaveis++;
-          perdaTotalItem = Math.abs(perdaParcialItem);
-        } else if (classe === 'Crítica') {
-          criticas++;
-          perdaTotalItem = Math.abs(reembolso) + Math.abs(perdaParcialItem);
-        } else {
-          neutras++;
-          perdaTotalItem = Math.abs(perdaParcialItem);
-        }
-        
-        impactoDevolucao += Math.abs(reembolso);
-        perdaTotal += perdaTotalItem;
-        perdaParcial += Math.abs(perdaParcialItem);
+
+      const reembolso = Math.abs(Number(row['Cancelamentos e reembolsos (BRL)']) || 0);
+      const tarifasEnvio = Math.abs(Number(row['Tarifas de envio (BRL)']) || 0);
+      const tarifaVenda = Math.abs(Number(row['Tarifa de venda e impostos (BRL)']) || 0);
+      const custosParciais = tarifasEnvio + tarifaVenda;
+
+      impactoDevolucao += reembolso;
+
+      if (row._classificacao === 'Saudável') {
+        saudaveis++;
+        // Product returned to stock - partial loss (fees only)
+        perdaTotal += custosParciais;
+        perdaParcial += custosParciais;
+      } else if (row._classificacao === 'Crítica') {
+        criticas++;
+        // Total loss: reimbursement + fees
+        perdaTotal += reembolso + custosParciais;
+        perdaParcial += custosParciais;
+      } else {
+        neutras++;
+        // In progress - count fees as partial
+        perdaTotal += custosParciais;
+        perdaParcial += custosParciais;
       }
     }
   }
-  
-  const devolucoesCount = vendaComDevolucao.size;
+
   const taxaDevolucao = vendasTotais > 0 ? devolucoesCount / vendasTotais : 0;
-  
+
   return {
     vendas: vendasTotais,
     unidades: unidadesTotais,

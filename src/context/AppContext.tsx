@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import type { ProcessedData, FilterState, SalesRow, ReturnRow } from '@/lib/types';
+import type { ProcessedData, FilterState, SalesRow } from '@/lib/types';
 import { processFiles } from '@/lib/parser';
 import { aplicarFiltros } from '@/lib/filters';
 
@@ -7,14 +7,12 @@ interface AppState {
   data: ProcessedData | null;
   filters: FilterState;
   filteredVendas: SalesRow[];
-  filteredMatriz: ReturnRow[];
-  filteredFull: ReturnRow[];
   isLoading: boolean;
   error: string | null;
 }
 
 interface AppContextType extends AppState {
-  loadFiles: (vendasFile: ArrayBuffer, devolucoesFile: ArrayBuffer) => void;
+  loadFile: (vendasFile: ArrayBuffer) => void;
   setFilters: (filters: Partial<FilterState>) => void;
   resetData: () => void;
 }
@@ -33,28 +31,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     data: null,
     filters: defaultFilters,
     filteredVendas: [],
-    filteredMatriz: [],
-    filteredFull: [],
     isLoading: false,
     error: null,
   });
 
-  const applyFilters = useCallback((data: ProcessedData, filters: FilterState) => {
-    const { vendas, matriz, full } = aplicarFiltros(data, filters);
-    return { filteredVendas: vendas, filteredMatriz: matriz, filteredFull: full };
-  }, []);
-
-  const loadFiles = useCallback((vendasFile: ArrayBuffer, devolucoesFile: ArrayBuffer) => {
+  const loadFile = useCallback((vendasFile: ArrayBuffer) => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
-      const data = processFiles(vendasFile, devolucoesFile);
+      const data = processFiles(vendasFile);
       const filtered = aplicarFiltros(data, defaultFilters);
       setState({
         data,
         filters: defaultFilters,
         filteredVendas: filtered.vendas,
-        filteredMatriz: filtered.matriz,
-        filteredFull: filtered.full,
         isLoading: false,
         error: null,
       });
@@ -62,7 +51,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setState(prev => ({
         ...prev,
         isLoading: false,
-        error: e instanceof Error ? e.message : 'Erro ao processar arquivos',
+        error: e instanceof Error ? e.message : 'Erro ao processar arquivo',
       }));
     }
   }, []);
@@ -76,8 +65,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         ...prev,
         filters: newFilters,
         filteredVendas: filtered.vendas,
-        filteredMatriz: filtered.matriz,
-        filteredFull: filtered.full,
       };
     });
   }, []);
@@ -87,15 +74,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       data: null,
       filters: defaultFilters,
       filteredVendas: [],
-      filteredMatriz: [],
-      filteredFull: [],
       isLoading: false,
       error: null,
     });
   }, []);
 
   return (
-    <AppContext.Provider value={{ ...state, loadFiles, setFilters, resetData }}>
+    <AppContext.Provider value={{ ...state, loadFile, setFilters, resetData }}>
       {children}
     </AppContext.Provider>
   );

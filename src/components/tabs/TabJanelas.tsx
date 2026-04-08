@@ -11,7 +11,7 @@ export function TabJanelas() {
   const janelas = [30, 60, 90, 120, 150, 180];
   const chartData = janelas.map(j => {
     const filtered = aplicarFiltros(data, { janela: j, canal: 'Todos', somenteAds: false, top10Skus: false });
-    const m = calcularMetricas(filtered.vendas, filtered.matriz, filtered.full);
+    const m = calcularMetricas(filtered.vendas);
     return {
       periodo: `${j}d`,
       vendas: m.vendas,

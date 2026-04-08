@@ -11,8 +11,8 @@ import {
 } from 'recharts';
 
 export function TabResumo() {
-  const { filteredVendas, filteredMatriz, filteredFull } = useAppData();
-  const m = calcularMetricas(filteredVendas, filteredMatriz, filteredFull);
+  const { filteredVendas } = useAppData();
+  const m = calcularMetricas(filteredVendas);
 
   const pieData = [
     { name: 'Saudável', value: m.saudaveis, color: '#10b981' },
@@ -42,28 +42,11 @@ export function TabResumo() {
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
-                  dataKey="value"
-                  paddingAngle={4}
-                  strokeWidth={0}
-                >
-                  {pieData.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} />
-                  ))}
+                <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" paddingAngle={4} strokeWidth={0}>
+                  {pieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                 </Pie>
-                <Tooltip
-                  contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: '8px', fontSize: '12px' }}
-                  itemStyle={{ color: '#fff' }}
-                />
-                <Legend
-                  wrapperStyle={{ fontSize: '12px' }}
-                  formatter={(value) => <span style={{ color: '#999' }}>{value}</span>}
-                />
+                <Tooltip contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: '8px', fontSize: '12px' }} itemStyle={{ color: '#fff' }} />
+                <Legend wrapperStyle={{ fontSize: '12px' }} formatter={(value) => <span style={{ color: '#999' }}>{value}</span>} />
               </PieChart>
             </ResponsiveContainer>
           </div>

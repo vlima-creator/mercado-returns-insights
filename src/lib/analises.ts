@@ -1,35 +1,19 @@
-import type { SalesRow, ReturnRow, FreteAnalysis, MotivoAnalysis, AdsAnalysis, SkuAnalysis } from './types';
+import type { SalesRow, FreteAnalysis, MotivoAnalysis, AdsAnalysis, SkuAnalysis } from './types';
 
-function buildDevMap(matriz: ReturnRow[], full: ReturnRow[]): Record<string, ReturnRow[]> {
-  const map: Record<string, ReturnRow[]> = {};
-  for (const dev of [...matriz, ...full]) {
-    const key = String(dev['N.º de venda'] ?? '');
-    if (!map[key]) map[key] = [];
-    map[key].push(dev);
-  }
-  return map;
-}
-
-export function analisarFrete(vendas: SalesRow[], matriz: ReturnRow[], full: ReturnRow[]): FreteAnalysis[] {
-  const devMap = buildDevMap(matriz, full);
+export function analisarFrete(vendas: SalesRow[]): FreteAnalysis[] {
   const formaMap: Record<string, { vendas: number; devolucoes: number; impacto: number }> = {};
-  
-  for (const venda of vendas) {
-    const forma = String(venda['Forma de entrega'] || 'Mercado Envios').trim() || 'Mercado Envios';
+
+  for (const row of vendas) {
+    const forma = String(row['Forma de entrega'] || 'Outros').trim() || 'Outros';
     if (!formaMap[forma]) formaMap[forma] = { vendas: 0, devolucoes: 0, impacto: 0 };
     formaMap[forma].vendas++;
-    
-    const numVenda = String(venda['N.º de venda'] ?? '');
-    if (devMap[numVenda]) {
+
+    if (row._isDevolucao) {
       formaMap[forma].devolucoes++;
-      for (const dev of devMap[numVenda]) {
-        let reembolso = Number(dev['Cancelamentos e reembolsos (BRL)']) || 0;
-        if (reembolso === 0) reembolso = Number(dev['Receita por produtos (BRL)']) || 0;
-        formaMap[forma].impacto += reembolso;
-      }
+      formaMap[forma].impacto += Math.abs(Number(row['Cancelamentos e reembolsos (BRL)']) || 0);
     }
   }
-  
+
   return Object.entries(formaMap).map(([forma, d]) => ({
     formaEntrega: forma,
     vendas: d.vendas,
@@ -39,51 +23,42 @@ export function analisarFrete(vendas: SalesRow[], matriz: ReturnRow[], full: Ret
   }));
 }
 
-export function analisarMotivos(vendas: SalesRow[], matriz: ReturnRow[], full: ReturnRow[]): MotivoAnalysis[] {
-  const todasDev = [...matriz, ...full];
-  if (todasDev.length === 0) return [];
-  
-  const vendasMap: Record<string, SalesRow> = {};
-  for (const v of vendas) {
-    vendasMap[String(v['N.º de venda'])] = v;
-  }
-  
+export function analisarMotivos(vendas: SalesRow[]): MotivoAnalysis[] {
+  const devolucoes = vendas.filter(v => v._isDevolucao);
+  if (devolucoes.length === 0) return [];
+
   const motivoCounts: Record<string, number> = {};
-  
-  for (const dev of todasDev) {
-    let motivo = String(dev['Motivo do resultado'] ?? '').trim();
-    
+
+  for (const row of devolucoes) {
+    let motivo = String(row['Motivo do resultado'] ?? '').trim();
+
     if (!motivo || motivo === 'undefined' || motivo === 'nan') {
-      const numVenda = String(dev['N.º de venda'] ?? '');
-      const vendaInfo = vendasMap[numVenda];
-      const estadoDev = String(dev['Estado'] ?? '').toLowerCase();
-      const statusDev = String(dev['Descrição do status'] ?? '').toLowerCase();
-      const estadoVenda = String(vendaInfo?.['Estado'] ?? '').toLowerCase();
-      const statusVenda = String((vendaInfo as Record<string, unknown>)?.['Descrição do status'] ?? '').toLowerCase();
-      
-      if (estadoVenda.includes('estoque') || statusVenda.includes('estoque')) {
-        motivo = 'Cancelado: Falta de Estoque';
-      } else if (statusVenda.includes('arrependeu') || statusDev.includes('arrependeu')) {
-        motivo = 'Cancelado: Arrependimento do Comprador';
-      } else if (estadoVenda.includes('você cancelou')) {
-        motivo = 'Cancelado pelo Vendedor';
-      } else if (statusDev.includes('não funciona') || statusDev.includes('defeito')) {
-        motivo = 'Produto com Defeito';
-      } else if (estadoDev.includes('reembolso') || estadoDev.includes('reembolsamos')) {
-        motivo = 'Reembolso Direto';
-      } else if (estadoDev.includes('mediação')) {
-        motivo = 'Finalizado via Mediação';
+      const estado = String(row['Estado'] ?? '').toLowerCase();
+      const status = String(row['Descrição do status'] ?? '').toLowerCase();
+
+      if (estado.includes('cancelada')) {
+        motivo = 'Cancelamento';
+      } else if (status.includes('arrependeu') || status.includes('arrependimento')) {
+        motivo = 'Arrependimento do Comprador';
+      } else if (estado.includes('mediação')) {
+        motivo = 'Mediação';
+      } else if (estado.includes('reembolso')) {
+        motivo = 'Reembolso';
+      } else if (estado.includes('troca')) {
+        motivo = 'Troca de Produto';
+      } else if (estado.includes('descartamos')) {
+        motivo = 'Produto Descartado';
       } else {
         motivo = 'Outros Motivos';
       }
     }
-    
-    if (motivo.length > 50) motivo = motivo.substring(0, 50);
+
+    if (motivo.length > 60) motivo = motivo.substring(0, 60);
     motivoCounts[motivo] = (motivoCounts[motivo] || 0) + 1;
   }
-  
+
   const total = Object.values(motivoCounts).reduce((a, b) => a + b, 0);
-  
+
   return Object.entries(motivoCounts)
     .map(([motivo, quantidade]) => ({
       motivo,
@@ -93,69 +68,55 @@ export function analisarMotivos(vendas: SalesRow[], matriz: ReturnRow[], full: R
     .sort((a, b) => b.quantidade - a.quantidade);
 }
 
-export function analisarAds(vendas: SalesRow[], matriz: ReturnRow[], full: ReturnRow[]): AdsAnalysis[] {
-  const devMap = buildDevMap(matriz, full);
+export function analisarAds(vendas: SalesRow[]): AdsAnalysis[] {
   const result: AdsAnalysis[] = [];
-  
-  for (const tipo of ['Sim', 'Não']) {
-    const vendasFiltradas = vendas.filter(v => {
+
+  for (const tipo of ['Sim', 'Não'] as const) {
+    const filtered = vendas.filter(v => {
       const val = String(v['Venda por publicidade'] ?? 'Não');
       return tipo === 'Sim' ? val === 'Sim' : val !== 'Sim';
     });
-    
+
     let devCount = 0;
     let receita = 0;
     let impacto = 0;
-    const seen = new Set<string>();
-    
-    for (const venda of vendasFiltradas) {
-      receita += Number(venda['Receita por produtos (BRL)']) || 0;
-      const num = String(venda['N.º de venda'] ?? '');
-      if (devMap[num] && !seen.has(num)) {
-        seen.add(num);
+
+    for (const row of filtered) {
+      receita += Number(row['Receita por produtos (BRL)']) || 0;
+      if (row._isDevolucao) {
         devCount++;
-        for (const dev of devMap[num]) {
-          let r = Number(dev['Cancelamentos e reembolsos (BRL)']) || 0;
-          if (r === 0) r = Number(dev['Receita por produtos (BRL)']) || 0;
-          impacto += r;
-        }
+        impacto += Math.abs(Number(row['Cancelamentos e reembolsos (BRL)']) || 0);
       }
     }
-    
+
     result.push({
       tipo: tipo === 'Sim' ? 'Publicidade' : 'Orgânico',
-      vendas: vendasFiltradas.length,
+      vendas: filtered.length,
       devolucoes: devCount,
-      taxa: vendasFiltradas.length > 0 ? (devCount / vendasFiltradas.length) * 100 : 0,
+      taxa: filtered.length > 0 ? (devCount / filtered.length) * 100 : 0,
       receita,
       impacto: -impacto,
     });
   }
-  
+
   return result;
 }
 
-export function analisarSkus(vendas: SalesRow[], matriz: ReturnRow[], full: ReturnRow[], topN = 20): SkuAnalysis[] {
-  const devMap = buildDevMap(matriz, full);
+export function analisarSkus(vendas: SalesRow[], topN = 20): SkuAnalysis[] {
   const skuMap: Record<string, { vendas: number; devolucoes: number; receita: number; impacto: number }> = {};
-  
-  for (const venda of vendas) {
-    const sku = String(venda['SKU'] ?? 'SEM SKU');
+
+  for (const row of vendas) {
+    const sku = String(row['SKU'] ?? 'SEM SKU');
     if (!skuMap[sku]) skuMap[sku] = { vendas: 0, devolucoes: 0, receita: 0, impacto: 0 };
     skuMap[sku].vendas++;
-    skuMap[sku].receita += Number(venda['Receita por produtos (BRL)']) || 0;
-    
-    const num = String(venda['N.º de venda'] ?? '');
-    if (devMap[num]) {
+    skuMap[sku].receita += Number(row['Receita por produtos (BRL)']) || 0;
+
+    if (row._isDevolucao) {
       skuMap[sku].devolucoes++;
-      for (const dev of devMap[num]) {
-        let r = Number(dev['Cancelamentos e reembolsos (BRL)']) || 0;
-        if (r === 0) r = Number(dev['Receita por produtos (BRL)']) || 0;
-        skuMap[sku].impacto += r;
-      }
+      skuMap[sku].impacto += Math.abs(Number(row['Cancelamentos e reembolsos (BRL)']) || 0);
     }
   }
-  
+
   return Object.entries(skuMap)
     .map(([sku, d]) => {
       const taxa = d.vendas > 0 ? (d.devolucoes / d.vendas) * 100 : 0;
@@ -166,7 +127,7 @@ export function analisarSkus(vendas: SalesRow[], matriz: ReturnRow[], full: Retu
         taxa,
         impacto: -d.impacto,
         receita: d.receita,
-        scoreRisco: (taxa * Math.abs(d.impacto)) / 100,
+        scoreRisco: (taxa * d.impacto) / 100,
       };
     })
     .sort((a, b) => b.scoreRisco - a.scoreRisco)

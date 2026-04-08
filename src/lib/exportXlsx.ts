@@ -1,62 +1,51 @@
 import * as XLSX from 'xlsx';
-import type { SalesRow, ReturnRow, Metrics, SkuAnalysis, MotivoAnalysis, FreteAnalysis } from './types';
+import type { SalesRow } from './types';
 import { calcularMetricas } from './metricas';
 import { analisarSkus, analisarMotivos, analisarFrete } from './analises';
 
-export function exportarXlsx(
-  vendas: SalesRow[],
-  matriz: ReturnRow[],
-  full: ReturnRow[]
-): void {
+export function exportarXlsx(vendas: SalesRow[]): void {
   const wb = XLSX.utils.book_new();
-  
-  // 1. Resumo
-  const metricas = calcularMetricas(vendas, matriz, full);
+
+  const metricas = calcularMetricas(vendas);
   const resumoData = [
     ['Total de Pedidos', metricas.vendas],
+    ['Unidades', metricas.unidades],
     ['Faturamento Produtos', metricas.faturamentoProdutos],
     ['Faturamento Total', metricas.faturamentoTotal],
     ['Devoluções', metricas.devolucoesVendas],
     ['Taxa de Devolução', metricas.taxaDevolucao],
     ['Impacto Financeiro', metricas.impactoDevolucao],
     ['Perda Total', metricas.perdaTotal],
+    ['Perda Parcial', metricas.perdaParcial],
     ['Saudáveis', metricas.saudaveis],
     ['Críticas', metricas.criticas],
     ['Neutras', metricas.neutras],
   ];
-  const wsResumo = XLSX.utils.aoa_to_sheet([['Métrica', 'Valor'], ...resumoData]);
-  XLSX.utils.book_append_sheet(wb, wsResumo, 'Resumo');
-  
-  // 2. Ranking SKUs
-  const skus = analisarSkus(vendas, matriz, full, 50);
-  if (skus.length > 0) {
-    const wsSkus = XLSX.utils.json_to_sheet(skus);
-    XLSX.utils.book_append_sheet(wb, wsSkus, 'Ranking SKUs');
-  }
-  
-  // 3. Motivos
-  const motivos = analisarMotivos(vendas, matriz, full);
-  if (motivos.length > 0) {
-    const wsMotivos = XLSX.utils.json_to_sheet(motivos);
-    XLSX.utils.book_append_sheet(wb, wsMotivos, 'Motivos');
-  }
-  
-  // 4. Frete
-  const frete = analisarFrete(vendas, matriz, full);
-  if (frete.length > 0) {
-    const wsFrete = XLSX.utils.json_to_sheet(frete);
-    XLSX.utils.book_append_sheet(wb, wsFrete, 'Logística');
-  }
-  
-  // 5. Dados Brutos
-  const wsVendas = XLSX.utils.json_to_sheet(vendas.slice(0, 2000) as unknown as Record<string, unknown>[]);
-  XLSX.utils.book_append_sheet(wb, wsVendas, 'Base Vendas');
-  
-  const todasDev = [...matriz, ...full];
-  if (todasDev.length > 0) {
-    const wsDev = XLSX.utils.json_to_sheet(todasDev as unknown as Record<string, unknown>[]);
-    XLSX.utils.book_append_sheet(wb, wsDev, 'Base Devoluções');
-  }
-  
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['Métrica', 'Valor'], ...resumoData]), 'Resumo');
+
+  const skus = analisarSkus(vendas, 50);
+  if (skus.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(skus), 'Ranking SKUs');
+
+  const motivos = analisarMotivos(vendas);
+  if (motivos.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(motivos), 'Motivos');
+
+  const frete = analisarFrete(vendas);
+  if (frete.length > 0) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(frete), 'Logística');
+
+  // Base data (limited)
+  const baseData = vendas.slice(0, 2000).map(v => ({
+    'N.º de venda': v['N.º de venda'],
+    'Data da venda': v['Data da venda'],
+    'SKU': v['SKU'],
+    'Estado': v['Estado'],
+    'Receita (BRL)': v['Receita por produtos (BRL)'],
+    'Cancelamentos (BRL)': v['Cancelamentos e reembolsos (BRL)'],
+    'Forma de entrega': v['Forma de entrega'],
+    'Devolução': v._isDevolucao ? 'Sim' : 'Não',
+    'Classificação': v._classificacao,
+    'Canal': v._canal,
+  }));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(baseData as any), 'Base Vendas');
+
   XLSX.writeFile(wb, 'analise_devolucoes.xlsx');
 }

@@ -11,8 +11,8 @@ export function TabMatrizFull() {
   const matrizFiltered = aplicarFiltros(data, { ...filters, canal: 'Matriz' });
   const fullFiltered = aplicarFiltros(data, { ...filters, canal: 'Full' });
 
-  const mMatriz = calcularMetricas(matrizFiltered.vendas, matrizFiltered.matriz, matrizFiltered.full);
-  const mFull = calcularMetricas(fullFiltered.vendas, fullFiltered.matriz, fullFiltered.full);
+  const mMatriz = calcularMetricas(matrizFiltered.vendas);
+  const mFull = calcularMetricas(fullFiltered.vendas);
 
   const comparison = [
     { metric: 'Vendas', Matriz: mMatriz.vendas, Full: mFull.vendas },
