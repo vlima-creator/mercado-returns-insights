@@ -1,10 +1,10 @@
 import React, { useCallback, useState, useRef } from 'react';
-import { Upload, FileSpreadsheet, AlertCircle, Loader2, RotateCcw, Download } from 'lucide-react';
+import { Upload, FileSpreadsheet, AlertCircle, Loader2, RotateCcw, Download, BookOpen } from 'lucide-react';
 import { useAppData } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { exportarXlsx } from '@/lib/exportXlsx';
 
-export function UploadSidebar() {
+export function UploadSidebar({ onOpenGuide }: { onOpenGuide: () => void }) {
   const { data, loadFile, resetData, isLoading, error, filteredVendas } = useAppData();
   const [vendasFile, setVendasFile] = useState<File | null>(null);
   const vendasRef = useRef<HTMLInputElement>(null);
@@ -100,7 +100,10 @@ export function UploadSidebar() {
         )}
       </div>
 
-      <div className="p-4 border-t border-border">
+      <div className="p-4 border-t border-border space-y-2">
+        <Button onClick={onOpenGuide} variant="ghost" className="w-full text-xs text-muted-foreground">
+          <BookOpen className="h-3.5 w-3.5 mr-2" /> Guia Completo
+        </Button>
         <p className="text-[10px] text-muted-foreground text-center">
           Processamento 100% client-side • Nenhum dado enviado
         </p>
