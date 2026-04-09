@@ -61,7 +61,7 @@ export function TabSkus() {
               <tr className="border-b border-border">
                 <th className="text-left py-2 px-3 text-muted-foreground font-semibold">#</th>
                 <th className="text-left py-2 px-3 text-muted-foreground font-semibold">{label}</th>
-                {identificador === 'MLB' && <th className="text-left py-2 px-3 text-muted-foreground font-semibold">Título</th>}
+                <th className="text-left py-2 px-3 text-muted-foreground font-semibold">Título</th>
                 {(['vendas', 'devolucoes', 'taxa', 'impacto', 'scoreRisco'] as SortKey[]).map(key => (
                   <th key={key} className="text-right py-2 px-3 text-muted-foreground font-semibold cursor-pointer hover:text-foreground transition-colors" onClick={() => setSortBy(key)}>
                     <span className="inline-flex items-center gap-1">
@@ -77,7 +77,7 @@ export function TabSkus() {
                 <tr key={row.sku} className="border-b border-border/50 hover:bg-muted/20">
                   <td className="py-2 px-3 text-muted-foreground">{i + 1}</td>
                   <td className="py-2 px-3 font-mono font-medium max-w-[200px] truncate" title={row.sku}>{row.sku}</td>
-                  {identificador === 'MLB' && <td className="py-2 px-3 max-w-[250px] truncate" title={row.titulo}>{row.titulo}</td>}
+                  <td className="py-2 px-3 max-w-[250px] truncate" title={row.titulo}>{row.titulo}</td>
                   <td className="py-2 px-3 text-right font-mono">{formatNumber(row.vendas)}</td>
                   <td className="py-2 px-3 text-right font-mono text-coral">{formatNumber(row.devolucoes)}</td>
                   <td className="py-2 px-3 text-right font-mono">{row.taxa.toFixed(1)}%</td>

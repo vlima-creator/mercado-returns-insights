@@ -118,8 +118,8 @@ export function analisarSkus(vendas: SalesRow[], topN = 20, identificador: Ident
     skuMap[key].vendas++;
     skuMap[key].receita += Number(row['Receita por produtos (BRL)']) || 0;
     
-    // Capture title for MLB view
-    if (identificador === 'MLB' && !skuMap[key].titulo) {
+    // Capture title
+    if (!skuMap[key].titulo) {
       skuMap[key].titulo = String(row['Título do anúncio'] ?? '');
     }
 
