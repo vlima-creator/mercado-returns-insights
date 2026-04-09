@@ -28,7 +28,7 @@ export function Dashboard() {
             { value: 'frete', label: '🚚 Frete' },
             { value: 'motivos', label: '❓ Motivos' },
             { value: 'ads', label: '📢 Ads' },
-            { value: 'skus', label: '📦 SKUs' },
+            { value: 'skus', label: '📦 Anúncios' },
             { value: 'simulador', label: '🎯 Simulador' },
             { value: 'anuncios', label: '🤖 IA Anúncios' },
           ].map(tab => (

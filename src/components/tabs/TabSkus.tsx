@@ -7,9 +7,10 @@ import { useState } from 'react';
 type SortKey = 'scoreRisco' | 'taxa' | 'impacto' | 'vendas' | 'devolucoes';
 
 export function TabSkus() {
-  const { filteredVendas } = useAppData();
+  const { filteredVendas, filters } = useAppData();
   const [sortBy, setSortBy] = useState<SortKey>('scoreRisco');
-  const skus = analisarSkus(filteredVendas, 30);
+  const identificador = filters.identificador;
+  const skus = analisarSkus(filteredVendas, 50, identificador);
 
   const sorted = [...skus].sort((a, b) => {
     if (sortBy === 'scoreRisco') return b.scoreRisco - a.scoreRisco;
@@ -19,8 +20,14 @@ export function TabSkus() {
     return b.devolucoes - a.devolucoes;
   });
 
+  // Stats
+  const totalAnunciosComDevolucao = skus.filter(s => s.devolucoes > 0).length;
+  const totalDevolucoes = skus.reduce((acc, s) => acc + s.devolucoes, 0);
+  const top10Devolucoes = sorted.filter(s => s.devolucoes > 0).slice(0, 10).reduce((acc, s) => acc + s.devolucoes, 0);
+  const taxaConcentracao = totalDevolucoes > 0 ? (top10Devolucoes / totalDevolucoes) * 100 : 0;
+
   if (sorted.length === 0) {
-    return <div className="glass-static p-8 text-center text-muted-foreground text-sm">Sem dados de SKU disponíveis.</div>;
+    return <div className="glass-static p-8 text-center text-muted-foreground text-sm">Sem dados de anúncios disponíveis.</div>;
   }
 
   const riskColor = (score: number) => {
@@ -29,16 +36,32 @@ export function TabSkus() {
     return 'text-emerald';
   };
 
+  const label = identificador === 'MLB' ? 'MLB' : 'SKU';
+
   return (
     <div className="space-y-4 animate-fade-in">
+      {/* Summary cards */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="glass-static p-4">
+          <p className="text-xs text-muted-foreground">Anúncios com Devolução</p>
+          <p className="text-2xl font-bold text-foreground">{formatNumber(totalAnunciosComDevolucao)}</p>
+        </div>
+        <div className="glass-static p-4">
+          <p className="text-xs text-muted-foreground">Concentração Top 10</p>
+          <p className="text-2xl font-bold text-coral">{taxaConcentracao.toFixed(1)}%</p>
+          <p className="text-xs text-muted-foreground mt-1">{formatNumber(top10Devolucoes)} de {formatNumber(totalDevolucoes)} devoluções</p>
+        </div>
+      </div>
+
       <div className="glass-static p-6">
-        <h3 className="text-sm font-semibold text-foreground mb-4">Ranking de SKUs por Risco</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-4">Ranking de Anúncios por Risco ({label})</h3>
         <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
           <table className="w-full text-xs">
             <thead className="sticky top-0 bg-card z-10">
               <tr className="border-b border-border">
                 <th className="text-left py-2 px-3 text-muted-foreground font-semibold">#</th>
-                <th className="text-left py-2 px-3 text-muted-foreground font-semibold">SKU</th>
+                <th className="text-left py-2 px-3 text-muted-foreground font-semibold">{label}</th>
+                {identificador === 'MLB' && <th className="text-left py-2 px-3 text-muted-foreground font-semibold">Título</th>}
                 {(['vendas', 'devolucoes', 'taxa', 'impacto', 'scoreRisco'] as SortKey[]).map(key => (
                   <th key={key} className="text-right py-2 px-3 text-muted-foreground font-semibold cursor-pointer hover:text-foreground transition-colors" onClick={() => setSortBy(key)}>
                     <span className="inline-flex items-center gap-1">
@@ -54,6 +77,7 @@ export function TabSkus() {
                 <tr key={row.sku} className="border-b border-border/50 hover:bg-muted/20">
                   <td className="py-2 px-3 text-muted-foreground">{i + 1}</td>
                   <td className="py-2 px-3 font-mono font-medium max-w-[200px] truncate" title={row.sku}>{row.sku}</td>
+                  {identificador === 'MLB' && <td className="py-2 px-3 max-w-[250px] truncate" title={row.titulo}>{row.titulo}</td>}
                   <td className="py-2 px-3 text-right font-mono">{formatNumber(row.vendas)}</td>
                   <td className="py-2 px-3 text-right font-mono text-coral">{formatNumber(row.devolucoes)}</td>
                   <td className="py-2 px-3 text-right font-mono">{row.taxa.toFixed(1)}%</td>

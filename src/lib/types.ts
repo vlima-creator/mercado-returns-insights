@@ -77,6 +77,7 @@ export interface SkuAnalysis {
   impacto: number;
   receita: number;
   scoreRisco: number;
+  titulo: string;
 }
 
 export interface QualidadeArquivo {
@@ -88,9 +89,12 @@ export interface QualidadeArquivo {
   };
 }
 
+export type IdentificadorProduto = 'SKU' | 'MLB';
+
 export type FilterState = {
   janela: number;
   canal: 'Todos' | 'Matriz' | 'Full';
   somenteAds: boolean;
   top10Skus: boolean;
+  identificador: IdentificadorProduto;
 };
