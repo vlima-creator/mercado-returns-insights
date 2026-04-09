@@ -88,9 +88,12 @@ export interface QualidadeArquivo {
   };
 }
 
+export type IdentificadorProduto = 'SKU' | 'MLB';
+
 export type FilterState = {
   janela: number;
   canal: 'Todos' | 'Matriz' | 'Full';
   somenteAds: boolean;
   top10Skus: boolean;
+  identificador: IdentificadorProduto;
 };

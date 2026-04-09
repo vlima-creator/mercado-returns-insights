@@ -22,6 +22,7 @@ const defaultFilters: FilterState = {
   canal: 'Todos',
   somenteAds: false,
   top10Skus: false,
+  identificador: 'SKU',
 };
 
 const AppContext = createContext<AppContextType | null>(null);

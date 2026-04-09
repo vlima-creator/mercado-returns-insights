@@ -3,6 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Filter } from 'lucide-react';
+import type { IdentificadorProduto } from '@/lib/types';
 
 export function FilterBar() {
   const { filters, setFilters, data } = useAppData();
@@ -55,7 +56,20 @@ export function FilterBar() {
           onCheckedChange={v => setFilters({ top10Skus: v })}
           className="data-[state=checked]:bg-primary"
         />
-        <Label className="text-xs text-muted-foreground">Top 10 SKUs</Label>
+        <Label className="text-xs text-muted-foreground">Top 10</Label>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <Label className="text-xs text-muted-foreground">Agrupar por</Label>
+        <Select value={filters.identificador} onValueChange={v => setFilters({ identificador: v as IdentificadorProduto })}>
+          <SelectTrigger className="w-24 h-8 text-xs bg-background/50 border-border">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="SKU">SKU</SelectItem>
+            <SelectItem value="MLB">MLB</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
