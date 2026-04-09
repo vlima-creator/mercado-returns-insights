@@ -1,4 +1,4 @@
-import type { SalesRow, FreteAnalysis, MotivoAnalysis, AdsAnalysis, SkuAnalysis } from './types';
+import type { SalesRow, FreteAnalysis, MotivoAnalysis, AdsAnalysis, SkuAnalysis, IdentificadorProduto } from './types';
 
 export function analisarFrete(vendas: SalesRow[]): FreteAnalysis[] {
   const formaMap: Record<string, { vendas: number; devolucoes: number; impacto: number }> = {};
@@ -102,18 +102,30 @@ export function analisarAds(vendas: SalesRow[]): AdsAnalysis[] {
   return result;
 }
 
-export function analisarSkus(vendas: SalesRow[], topN = 20): SkuAnalysis[] {
-  const skuMap: Record<string, { vendas: number; devolucoes: number; receita: number; impacto: number }> = {};
+function getProductKey(row: SalesRow, identificador: IdentificadorProduto): string {
+  if (identificador === 'MLB') {
+    return String(row['# de anúncio'] ?? 'SEM MLB');
+  }
+  return String(row['SKU'] ?? 'SEM SKU');
+}
+
+export function analisarSkus(vendas: SalesRow[], topN = 20, identificador: IdentificadorProduto = 'SKU'): SkuAnalysis[] {
+  const skuMap: Record<string, { vendas: number; devolucoes: number; receita: number; impacto: number; titulo: string }> = {};
 
   for (const row of vendas) {
-    const sku = String(row['SKU'] ?? 'SEM SKU');
-    if (!skuMap[sku]) skuMap[sku] = { vendas: 0, devolucoes: 0, receita: 0, impacto: 0 };
-    skuMap[sku].vendas++;
-    skuMap[sku].receita += Number(row['Receita por produtos (BRL)']) || 0;
+    const key = getProductKey(row, identificador);
+    if (!skuMap[key]) skuMap[key] = { vendas: 0, devolucoes: 0, receita: 0, impacto: 0, titulo: '' };
+    skuMap[key].vendas++;
+    skuMap[key].receita += Number(row['Receita por produtos (BRL)']) || 0;
+    
+    // Capture title for MLB view
+    if (identificador === 'MLB' && !skuMap[key].titulo) {
+      skuMap[key].titulo = String(row['Título do anúncio'] ?? '');
+    }
 
     if (row._isDevolucao) {
-      skuMap[sku].devolucoes++;
-      skuMap[sku].impacto += Math.abs(Number(row['Cancelamentos e reembolsos (BRL)']) || 0);
+      skuMap[key].devolucoes++;
+      skuMap[key].impacto += Math.abs(Number(row['Cancelamentos e reembolsos (BRL)']) || 0);
     }
   }
 
@@ -128,8 +140,28 @@ export function analisarSkus(vendas: SalesRow[], topN = 20): SkuAnalysis[] {
         impacto: -d.impacto,
         receita: d.receita,
         scoreRisco: (taxa * d.impacto) / 100,
+        titulo: d.titulo,
       };
     })
     .sort((a, b) => b.scoreRisco - a.scoreRisco)
     .slice(0, topN);
+}
+
+export function analisarTop5Devolucoes(vendas: SalesRow[], identificador: IdentificadorProduto = 'SKU'): { nome: string; devolucoes: number; titulo?: string }[] {
+  const map: Record<string, { devolucoes: number; titulo: string }> = {};
+
+  for (const row of vendas) {
+    if (!row._isDevolucao) continue;
+    const key = getProductKey(row, identificador);
+    if (!map[key]) map[key] = { devolucoes: 0, titulo: '' };
+    map[key].devolucoes++;
+    if (identificador === 'MLB' && !map[key].titulo) {
+      map[key].titulo = String(row['Título do anúncio'] ?? '');
+    }
+  }
+
+  return Object.entries(map)
+    .map(([nome, d]) => ({ nome, devolucoes: d.devolucoes, titulo: d.titulo }))
+    .sort((a, b) => b.devolucoes - a.devolucoes)
+    .slice(0, 5);
 }

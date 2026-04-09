@@ -2,7 +2,9 @@ import { useAppData } from '@/context/AppContext';
 import { calcularMetricas } from '@/lib/metricas';
 import { aplicarFiltros } from '@/lib/filters';
 import { formatBRL, formatPercent, formatNumber } from '@/lib/formatacao';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
+} from 'recharts';
 
 export function TabJanelas() {
   const { data } = useAppData();
@@ -10,7 +12,7 @@ export function TabJanelas() {
 
   const janelas = [30, 60, 90, 120, 150, 180];
   const chartData = janelas.map(j => {
-    const filtered = aplicarFiltros(data, { janela: j, canal: 'Todos', somenteAds: false, top10Skus: false });
+    const filtered = aplicarFiltros(data, { janela: j, canal: 'Todos', somenteAds: false, top10Skus: false, identificador: 'SKU' });
     const m = calcularMetricas(filtered.vendas);
     return {
       periodo: `${j}d`,
@@ -27,15 +29,17 @@ export function TabJanelas() {
         <h3 className="text-sm font-semibold text-foreground mb-4">Vendas vs Devoluções por Período</h3>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
+            <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#222" />
-              <XAxis dataKey="periodo" stroke="#666" fontSize={12} />
-              <YAxis stroke="#666" fontSize={12} />
+              <XAxis dataKey="periodo" stroke="#666" fontSize={12} label={{ value: 'Período', position: 'insideBottom', offset: -5, fill: '#666', fontSize: 12 }} />
+              <YAxis yAxisId="left" stroke="#666" fontSize={12} label={{ value: 'Vendas / Devoluções', angle: -90, position: 'insideLeft', fill: '#666', fontSize: 11 }} />
+              <YAxis yAxisId="right" orientation="right" stroke="#666" fontSize={12} domain={[0, 'auto']} label={{ value: 'Taxa (%)', angle: 90, position: 'insideRight', fill: '#666', fontSize: 11 }} />
               <Tooltip contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: '8px', fontSize: '12px' }} />
               <Legend wrapperStyle={{ fontSize: '12px' }} />
-              <Bar dataKey="vendas" fill="#10b981" name="Vendas" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="devolucoes" fill="#ef4444" name="Devoluções" radius={[4, 4, 0, 0]} />
-            </BarChart>
+              <Line yAxisId="left" type="monotone" dataKey="vendas" stroke="#3b82f6" name="Vendas" strokeWidth={2} dot={{ r: 4, fill: '#3b82f6' }} />
+              <Line yAxisId="left" type="monotone" dataKey="devolucoes" stroke="#f59e0b" name="Devoluções" strokeWidth={2} dot={{ r: 4, fill: '#f59e0b' }} />
+              <Line yAxisId="right" type="monotone" dataKey="taxa" stroke="#ef4444" name="Taxa (%)" strokeWidth={2} dot={{ r: 4, fill: '#ef4444' }} />
+            </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
