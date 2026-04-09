@@ -7,9 +7,10 @@ import {
   PackageX, Shield, XCircle, MinusCircle, Receipt
 } from 'lucide-react';
 import {
-  PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend
+  PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid
 } from 'recharts';
-import { analisarSkus } from '@/lib/analises';
+import { analisarSkus, analisarTop5Devolucoes } from '@/lib/analises';
 
 function getHealthLevel(taxa: number, prodProblematicos: number, impacto: number) {
   // Taxa de Devolução
@@ -52,10 +53,12 @@ const levelDot: Record<string, string> = {
 };
 
 export function TabResumo() {
-  const { filteredVendas } = useAppData();
+  const { filteredVendas, filters } = useAppData();
   const m = calcularMetricas(filteredVendas);
-  const skus = analisarSkus(filteredVendas, 100);
+  const identificador = filters.identificador;
+  const skus = analisarSkus(filteredVendas, 100, identificador);
   const prodProblematicos = skus.filter(s => s.taxa > 10 && s.devolucoes > 0).length;
+  const top5 = analisarTop5Devolucoes(filteredVendas, identificador);
 
   const health = getHealthLevel(
     m.taxaDevolucao * 100,
