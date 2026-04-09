@@ -77,6 +77,7 @@ export interface SkuAnalysis {
   impacto: number;
   receita: number;
   scoreRisco: number;
+  titulo: string;
 }
 
 export interface QualidadeArquivo {
