@@ -151,6 +151,28 @@ export function TabResumo() {
         </div>
       </div>
 
+      {/* Top 5 Products with Most Returns */}
+      {top5.length > 0 && (
+        <div className="glass-static p-6">
+          <h3 className="text-sm font-semibold text-foreground mb-4">Top 5 Produtos com Mais Devoluções ({identificador})</h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={top5} layout="vertical" margin={{ left: 10, right: 30 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#222" />
+                <XAxis type="number" stroke="#666" fontSize={12} />
+                <YAxis dataKey="nome" type="category" stroke="#666" fontSize={10} width={120} tick={{ fill: '#999' }} />
+                <Tooltip
+                  contentStyle={{ background: '#111', border: '1px solid #222', borderRadius: '8px', fontSize: '12px' }}
+                  itemStyle={{ color: '#fff' }}
+                  formatter={(value: number) => [formatNumber(value), 'Devoluções']}
+                />
+                <Bar dataKey="devolucoes" fill="#ef4444" name="Devoluções" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
       {/* Pie Chart */}
       {pieData.length > 0 && (
         <div className="glass-static p-6">
