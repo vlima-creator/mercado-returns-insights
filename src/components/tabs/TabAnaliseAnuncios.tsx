@@ -212,7 +212,7 @@ export function TabAnaliseAnuncios() {
             </Button>
           </div>
 
-          <div ref={resultRef} className="glass-static p-6">
+          <div className="glass-static p-6">
             <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground prose-hr:border-border">
               <ReactMarkdown>{result}</ReactMarkdown>
             </div>
