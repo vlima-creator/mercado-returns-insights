@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import ReactMarkdown from 'react-markdown';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { generateAnalysisPdf } from '@/lib/pdfAnalise';
 
 export function TabAnaliseAnuncios() {
   const [url, setUrl] = useState('');
@@ -13,72 +14,17 @@ export function TabAnaliseAnuncios() {
   const [error, setError] = useState<string | null>(null);
   const [generatingPdf, setGeneratingPdf] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
-  const resultRef = useRef<HTMLDivElement>(null);
 
   const handleStop = () => {
     abortRef.current?.abort();
     setAnalyzing(false);
   };
 
-  const handleExportPdf = async () => {
-    if (!resultRef.current || !result) return;
+  const handleExportPdf = () => {
+    if (!result) return;
     setGeneratingPdf(true);
-
     try {
-      const html2canvas = (await import('html2canvas')).default;
-      const { jsPDF } = await import('jspdf');
-
-      const element = resultRef.current;
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#1a1a2e',
-        logging: false,
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      const imgWidth = 190;
-      const pageHeight = 277;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      let heightLeft = imgHeight;
-      let position = 10;
-
-      // Header
-      pdf.setFontSize(8);
-      pdf.setTextColor(150, 150, 150);
-      pdf.text('Análise de Anúncio — Gerado por DevTrack ML', 10, 6);
-      pdf.text(new Date().toLocaleDateString('pt-BR'), 200, 6, { align: 'right' });
-
-      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight + 10;
-        pdf.addPage();
-        pdf.setFontSize(8);
-        pdf.setTextColor(150, 150, 150);
-        pdf.text('Análise de Anúncio — Gerado por DevTrack ML', 10, 6);
-        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      // Footer on last page
-      const pageCount = pdf.getNumberOfPages();
-      for (let i = 1; i <= pageCount; i++) {
-        pdf.setPage(i);
-        pdf.setFontSize(7);
-        pdf.setTextColor(130, 130, 130);
-        pdf.text(
-          '© 2026 Desenvolvido por Vinicius Lima | CNPJ: 47.192.694/0001-70',
-          105,
-          292,
-          { align: 'center' }
-        );
-        pdf.text(`Página ${i}/${pageCount}`, 200, 292, { align: 'right' });
-      }
-
+      const pdf = generateAnalysisPdf(result, url);
       const slug = url.split('/').pop()?.slice(0, 30) || 'analise';
       pdf.save(`analise-anuncio-${slug}.pdf`);
       toast.success('PDF exportado com sucesso!');
@@ -266,7 +212,7 @@ export function TabAnaliseAnuncios() {
             </Button>
           </div>
 
-          <div ref={resultRef} className="glass-static p-6">
+          <div className="glass-static p-6">
             <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground prose-hr:border-border">
               <ReactMarkdown>{result}</ReactMarkdown>
             </div>
