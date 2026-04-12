@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useRef } from 'react';
-import { Upload, FileSpreadsheet, AlertCircle, Loader2, RotateCcw, Download, BookOpen } from 'lucide-react';
+import { Upload, FileSpreadsheet, AlertCircle, Loader2, RotateCcw, Download, BookOpen, BarChart3 } from 'lucide-react';
 import { useAppData } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { exportarXlsx } from '@/lib/exportXlsx';
@@ -24,7 +24,7 @@ export function UploadSidebar({ onOpenGuide }: { onOpenGuide: () => void }) {
     <div className="w-72 min-h-screen border-r border-border bg-sidebar flex flex-col">
       <div className="p-6 border-b border-border">
         <h1 className="text-lg font-bold text-foreground flex items-center gap-2">
-          <span className="text-emerald">📊</span> Gestão de Devolução
+          <BarChart3 className="h-5 w-5 text-emerald" /> Gestão de Devolução
         </h1>
         <p className="text-xs text-muted-foreground mt-1">Análise inteligente • Mercado Livre</p>
       </div>

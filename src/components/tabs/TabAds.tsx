@@ -1,6 +1,7 @@
 import { useAppData } from '@/context/AppContext';
 import { analisarAds } from '@/lib/analises';
 import { formatBRL, formatNumber } from '@/lib/formatacao';
+import { Megaphone, Leaf } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 export function TabAds() {
@@ -16,8 +17,8 @@ export function TabAds() {
       <div className="grid grid-cols-2 gap-4">
         {adsData.map(ad => (
           <div key={ad.tipo} className="glass-static p-5">
-            <h3 className={`text-sm font-semibold mb-3 ${ad.tipo === 'Publicidade' ? 'text-amber-brand' : 'text-emerald'}`}>
-              {ad.tipo === 'Publicidade' ? '📢 Publicidade (Ads)' : '🌿 Orgânico'}
+            <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${ad.tipo === 'Publicidade' ? 'text-amber-brand' : 'text-emerald'}`}>
+              {ad.tipo === 'Publicidade' ? <><Megaphone className="h-4 w-4" /> Publicidade (Ads)</> : <><Leaf className="h-4 w-4" /> Orgânico</>}
             </h3>
             <div className="space-y-2 text-xs">
               <div className="flex justify-between"><span className="text-muted-foreground">Vendas</span><span className="font-mono">{formatNumber(ad.vendas)}</span></div>

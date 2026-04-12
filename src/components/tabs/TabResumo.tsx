@@ -4,7 +4,7 @@ import { MetricCard } from '@/components/MetricCard';
 import { formatBRL, formatPercent, formatNumber } from '@/lib/formatacao';
 import {
   ShoppingCart, DollarSign, TrendingDown, AlertTriangle,
-  PackageX, Shield, XCircle, MinusCircle, Receipt
+  PackageX, Shield, XCircle, MinusCircle, Receipt, BarChart3
 } from 'lucide-react';
 import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
@@ -115,7 +115,7 @@ export function TabResumo() {
       {/* Health Indicators Table */}
       <div className="glass-static p-6">
         <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-          📊 Indicadores de Saúde
+          <BarChart3 className="h-4 w-4 text-royal" /> Indicadores de Saúde
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">

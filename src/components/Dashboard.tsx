@@ -10,6 +10,10 @@ import { TabAds } from '@/components/tabs/TabAds';
 import { TabSkus } from '@/components/tabs/TabSkus';
 import { TabSimulador } from '@/components/tabs/TabSimulador';
 import { TabAnaliseAnuncios } from '@/components/tabs/TabAnaliseAnuncios';
+import {
+  BarChart3, CalendarDays, GitCompare, Truck, HelpCircle,
+  Megaphone, Package, Target, Bot
+} from 'lucide-react';
 
 export function Dashboard() {
   const { data } = useAppData();
@@ -22,21 +26,22 @@ export function Dashboard() {
       <Tabs defaultValue="resumo" className="w-full">
         <TabsList className="w-full flex flex-wrap gap-1 h-auto bg-transparent p-0 mb-4">
           {[
-            { value: 'resumo', label: '📊 Resumo' },
-            { value: 'janelas', label: '📅 Janelas' },
-            { value: 'matriz-full', label: '🔀 Matriz vs Full' },
-            { value: 'frete', label: '🚚 Frete' },
-            { value: 'motivos', label: '❓ Motivos' },
-            { value: 'ads', label: '📢 Ads' },
-            { value: 'skus', label: '📦 Anúncios' },
-            { value: 'simulador', label: '🎯 Simulador' },
-            { value: 'anuncios', label: '🤖 IA Anúncios' },
+            { value: 'resumo', label: 'Resumo', icon: BarChart3 },
+            { value: 'janelas', label: 'Janelas', icon: CalendarDays },
+            { value: 'matriz-full', label: 'Matriz vs Full', icon: GitCompare },
+            { value: 'frete', label: 'Frete', icon: Truck },
+            { value: 'motivos', label: 'Motivos', icon: HelpCircle },
+            { value: 'ads', label: 'Ads', icon: Megaphone },
+            { value: 'skus', label: 'Anúncios', icon: Package },
+            { value: 'simulador', label: 'Simulador', icon: Target },
+            { value: 'anuncios', label: 'IA Anúncios', icon: Bot },
           ].map(tab => (
             <TabsTrigger
               key={tab.value}
               value={tab.value}
               className="flex-1 min-w-[120px] glass-static text-xs font-semibold px-4 py-2.5 data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:border-primary/40 hover:bg-muted/30 transition-all"
             >
+              <tab.icon className="h-3.5 w-3.5 mr-1.5" />
               {tab.label}
             </TabsTrigger>
           ))}
