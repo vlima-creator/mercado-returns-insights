@@ -21,6 +21,7 @@ export function MetricCard({ label, value, subvalue, icon: Icon, variant = 'defa
     default: '',
     success: 'bg-emerald-glow',
     danger: 'bg-coral-glow',
+    warning: 'bg-amber/10',
     info: 'bg-royal-glow',
   }[variant];
 
