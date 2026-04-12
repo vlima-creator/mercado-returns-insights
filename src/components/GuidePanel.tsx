@@ -242,42 +242,42 @@ export function GuidePanel({ onClose }: { onClose: () => void }) {
         <>
           <div className="space-y-3">
             <div>
-              <p className="text-foreground font-medium">📊 Resumo</p>
+              <p className="text-foreground font-medium">Resumo</p>
               <p>Visão geral com todos os KPIs, gráfico de rosca (classificação das devoluções) e top 5 produtos com mais devoluções. É o ponto de partida da análise.</p>
             </div>
             <div>
-              <p className="text-foreground font-medium">📅 Janelas</p>
+              <p className="text-foreground font-medium">Janelas</p>
               <p>Gráfico de linhas mostrando a evolução de vendas, devoluções e taxa ao longo de 6 períodos (30d a 180d). Eixo Y duplo: quantidade à esquerda, taxa (%) à direita. Identifica tendências sazonais.</p>
             </div>
             <div>
-              <p className="text-foreground font-medium">🔀 Matriz vs Full</p>
+              <p className="text-foreground font-medium">Matriz vs Full</p>
               <p>Compara a performance entre os canais. <strong className="text-foreground">Matriz</strong> = seu estoque próprio. <strong className="text-foreground">Full</strong> = estoque no Fulfillment do ML. Identifica se problemas vêm de qualidade (Matriz) ou logística (Full).</p>
             </div>
             <div>
-              <p className="text-foreground font-medium">🚚 Frete</p>
+              <p className="text-foreground font-medium">Frete</p>
               <p>Análise por forma de entrega (Flex, Full, Mercado Envios, etc.). Identifica qual método de envio tem mais devoluções — pode indicar problemas de embalagem ou atrasos.</p>
             </div>
             <div>
-              <p className="text-foreground font-medium">❓ Motivos</p>
+              <p className="text-foreground font-medium">Motivos</p>
               <p>Ranking dos principais motivos de devolução. Categorização inteligente para motivos vazios (analisa o estado e descrição do status para inferir o motivo). Interpretação:<br/>
               • Maioria "Descrição não corresponde" → Revise seu anúncio<br/>
               • Maioria "Defeito" → Revise qualidade do produto<br/>
               • Maioria "Danificado" → Revise embalagem/logística</p>
             </div>
             <div>
-              <p className="text-foreground font-medium">📢 Ads</p>
+              <p className="text-foreground font-medium">Ads</p>
               <p>Compara vendas orgânicas vs publicidade. Se anúncios pagos trazem mais devoluções, pode indicar problema na segmentação. Ajuda a otimizar ROI de publicidade.</p>
             </div>
             <div>
-              <p className="text-foreground font-medium">📦 Anúncios</p>
+              <p className="text-foreground font-medium">Anúncios</p>
               <p>Ranking completo de produtos por Score de Risco. Mostra total de anúncios com devolução e taxa de concentração dos top 10. Alterne entre visualização por SKU ou MLB (# de anúncio) com o filtro "Agrupar por".</p>
             </div>
             <div>
-              <p className="text-foreground font-medium">🎯 Simulador</p>
+              <p className="text-foreground font-medium">Simulador</p>
               <p>Slider interativo para simular a redução percentual nas devoluções. Calcula a economia financeira projetada e mostra a nova taxa de devolução. Ajuda a priorizar ações com maior ROI.</p>
             </div>
             <div>
-              <p className="text-foreground font-medium">🤖 IA Anúncios</p>
+              <p className="text-foreground font-medium">IA Anúncios</p>
               <p>Cole a URL de um anúncio do Mercado Livre para receber um diagnóstico inteligente com sugestões de melhoria para título, fotos, descrição e palavras-chave.</p>
             </div>
           </div>
