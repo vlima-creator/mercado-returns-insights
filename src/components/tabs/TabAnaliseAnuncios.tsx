@@ -38,7 +38,7 @@ export function TabAnaliseAnuncios() {
 
   const handleAnalyze = async () => {
     if (!url.includes('mercadolivre') && !url.includes('mercadolibre')) {
-      setError('⚠️ Por favor, insira uma URL válida do Mercado Livre.');
+      setError('Por favor, insira uma URL válida do Mercado Livre.');
       return;
     }
 

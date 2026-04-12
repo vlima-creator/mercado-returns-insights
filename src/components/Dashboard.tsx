@@ -22,14 +22,14 @@ export function Dashboard() {
       <Tabs defaultValue="resumo" className="w-full">
         <TabsList className="w-full flex flex-wrap gap-1 h-auto bg-transparent p-0 mb-4">
           {[
-            { value: 'resumo', label: '📊 Resumo' },
-            { value: 'janelas', label: '📅 Janelas' },
-            { value: 'matriz-full', label: '🔀 Matriz vs Full' },
-            { value: 'frete', label: '🚚 Frete' },
-            { value: 'motivos', label: '❓ Motivos' },
-            { value: 'ads', label: '📢 Ads' },
-            { value: 'skus', label: '📦 Anúncios' },
-            { value: 'simulador', label: '🎯 Simulador' },
+            { value: 'resumo', label: 'Resumo' },
+            { value: 'janelas', label: 'Janelas' },
+            { value: 'matriz-full', label: 'Matriz vs Full' },
+            { value: 'frete', label: 'Frete' },
+            { value: 'motivos', label: 'Motivos' },
+            { value: 'ads', label: 'Ads' },
+            { value: 'skus', label: 'Anúncios' },
+            { value: 'simulador', label: 'Simulador' },
             { value: 'anuncios', label: '🤖 IA Anúncios' },
           ].map(tab => (
             <TabsTrigger

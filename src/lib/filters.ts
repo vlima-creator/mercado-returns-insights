@@ -23,20 +23,27 @@ export function aplicarFiltros(data: ProcessedData, filters: FilterState): { ven
     vendas = vendas.filter(v => String(v['Venda por publicidade']) === 'Sim');
   }
 
-  // 4) Top 10 SKUs by return count
+  // 4) Top 10 by return count (respects identificador)
   if (filters.top10Skus) {
-    const skuCounts: Record<string, number> = {};
+    const keyCounts: Record<string, number> = {};
     for (const v of vendas) {
       if (v._isDevolucao) {
-        const sku = String(v['SKU'] ?? '');
-        skuCounts[sku] = (skuCounts[sku] || 0) + 1;
+        const key = filters.identificador === 'MLB'
+          ? String(v['# de anúncio'] ?? '')
+          : String(v['SKU'] ?? '');
+        keyCounts[key] = (keyCounts[key] || 0) + 1;
       }
     }
-    const topSkus = Object.entries(skuCounts)
+    const topKeys = Object.entries(keyCounts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 10)
-      .map(([sku]) => sku);
-    vendas = vendas.filter(v => topSkus.includes(String(v['SKU'] ?? '')));
+      .map(([k]) => k);
+    vendas = vendas.filter(v => {
+      const key = filters.identificador === 'MLB'
+        ? String(v['# de anúncio'] ?? '')
+        : String(v['SKU'] ?? '');
+      return topKeys.includes(key);
+    });
   }
 
   return { vendas };
