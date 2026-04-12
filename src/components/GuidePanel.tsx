@@ -349,23 +349,23 @@ export function GuidePanel({ onClose }: { onClose: () => void }) {
         <>
           <div className="space-y-2">
             <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
-              <p className="text-emerald font-bold text-xs">✅ Comece pelo Resumo</p>
+              <p className="text-emerald font-bold text-xs">Comece pelo Resumo</p>
               <p className="text-[10px]">Veja a visão geral e identifique os indicadores em "Atenção" ou "Crítico" para saber onde focar.</p>
             </div>
             <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
-              <p className="text-emerald font-bold text-xs">✅ Use o filtro de Janela</p>
+              <p className="text-emerald font-bold text-xs">Use o filtro de Janela</p>
               <p className="text-[10px]">Compare períodos curtos (30d) vs longos (180d) para identificar tendências e sazonalidade.</p>
             </div>
             <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
-              <p className="text-emerald font-bold text-xs">✅ Analise Matriz vs Full separadamente</p>
+              <p className="text-emerald font-bold text-xs">Analise Matriz vs Full separadamente</p>
               <p className="text-[10px]">Use o filtro de Canal para entender se os problemas vêm do seu estoque ou do Fulfillment.</p>
             </div>
             <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
-              <p className="text-emerald font-bold text-xs">✅ Priorize pelo Score de Risco</p>
+              <p className="text-emerald font-bold text-xs">Priorize pelo Score de Risco</p>
               <p className="text-[10px]">Na aba Anúncios, foque nos SKUs com maior score — eles combinam alta frequência e alto impacto financeiro.</p>
             </div>
             <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
-              <p className="text-emerald font-bold text-xs">✅ Simule antes de agir</p>
+              <p className="text-emerald font-bold text-xs">Simule antes de agir</p>
               <p className="text-[10px]">Use o Simulador para estimar o retorno financeiro de reduzir devoluções antes de investir em ações corretivas.</p>
             </div>
           </div>
