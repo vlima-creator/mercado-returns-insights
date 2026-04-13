@@ -19,6 +19,7 @@ export interface SalesRow {
   _isDevolucao: boolean;
   _classificacao: 'Saudável' | 'Crítica' | 'Neutra' | 'Nenhuma';
   _canal: 'Full' | 'Matriz';
+  _marketplace?: 'Mercado Livre' | 'Shopee';
   [key: string]: unknown;
 }
 
