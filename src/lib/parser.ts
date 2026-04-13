@@ -84,6 +84,7 @@ export function processFiles(vendasFile: ArrayBuffer): ProcessedData {
     // Classify Matriz vs Full from "Forma de entrega"
     const forma = String(row['Forma de entrega'] ?? '');
     row._canal = forma.toLowerCase().includes('full') ? 'Full' : 'Matriz';
+    row._marketplace = 'Mercado Livre';
   }
 
   if (maxDate.getTime() === 0) maxDate = new Date();

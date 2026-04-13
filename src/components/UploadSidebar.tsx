@@ -58,7 +58,7 @@ export function UploadSidebar({ onOpenGuide }: { onOpenGuide: () => void }) {
             )}
           </button>
           <p className="text-[10px] text-muted-foreground mt-1 text-center">
-            Arquivo com aba "Vendas BR"
+            Mercado Livre (.xlsx com aba "Vendas BR") ou Shopee (.xlsx com aba "orders")
           </p>
         </div>
 
