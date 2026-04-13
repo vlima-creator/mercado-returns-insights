@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx';
 import type { SalesRow, ProcessedData } from './types';
 import { isDevolucao, classificarDevolucao } from './statusDevolucao';
+import { isShopeeFile, processShopeeFile } from './parserShopee';
 
 const MESES_PT: Record<string, number> = {
   'janeiro': 1, 'fevereiro': 2, 'março': 3, 'abril': 4, 'maio': 5, 'junho': 6,
@@ -47,9 +48,14 @@ function processSheet(rows: Record<string, unknown>[]): Record<string, unknown>[
 }
 
 export function processFiles(vendasFile: ArrayBuffer): ProcessedData {
+  // Auto-detect marketplace
+  if (isShopeeFile(vendasFile)) {
+    return processShopeeFile(vendasFile);
+  }
+
   const wb = XLSX.read(vendasFile, { type: 'array' });
   const sheet = wb.Sheets['Vendas BR'];
-  if (!sheet) throw new Error('Aba "Vendas BR" não encontrada no arquivo.');
+  if (!sheet) throw new Error('Aba "Vendas BR" (Mercado Livre) ou "orders" (Shopee) não encontrada no arquivo.');
 
   const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { range: 5 });
   const processed = processSheet(rows).filter(r =>
@@ -78,6 +84,7 @@ export function processFiles(vendasFile: ArrayBuffer): ProcessedData {
     // Classify Matriz vs Full from "Forma de entrega"
     const forma = String(row['Forma de entrega'] ?? '');
     row._canal = forma.toLowerCase().includes('full') ? 'Full' : 'Matriz';
+    row._marketplace = 'Mercado Livre';
   }
 
   if (maxDate.getTime() === 0) maxDate = new Date();

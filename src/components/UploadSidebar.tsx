@@ -58,7 +58,7 @@ export function UploadSidebar({ onOpenGuide }: { onOpenGuide: () => void }) {
             )}
           </button>
           <p className="text-[10px] text-muted-foreground mt-1 text-center">
-            Arquivo com aba "Vendas BR"
+            Mercado Livre (.xlsx com aba "Vendas BR") ou Shopee (.xlsx com aba "orders")
           </p>
         </div>
 
@@ -85,6 +85,9 @@ export function UploadSidebar({ onOpenGuide }: { onOpenGuide: () => void }) {
           <div className="space-y-3 pt-4 border-t border-border">
             <div className="glass-static p-3 space-y-1">
               <p className="text-xs text-muted-foreground">Arquivo carregado</p>
+              {data.vendas[0]?._marketplace && (
+                <p className="text-xs font-semibold text-primary">{data.vendas[0]._marketplace}</p>
+              )}
               <p className="text-sm font-mono text-emerald">{data.totalVendas.toLocaleString()} vendas</p>
               <p className="text-sm font-mono text-coral">{data.totalDevolucoes.toLocaleString()} devoluções</p>
             </div>
