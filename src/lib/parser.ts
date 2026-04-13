@@ -48,9 +48,14 @@ function processSheet(rows: Record<string, unknown>[]): Record<string, unknown>[
 }
 
 export function processFiles(vendasFile: ArrayBuffer): ProcessedData {
+  // Auto-detect marketplace
+  if (isShopeeFile(vendasFile)) {
+    return processShopeeFile(vendasFile);
+  }
+
   const wb = XLSX.read(vendasFile, { type: 'array' });
   const sheet = wb.Sheets['Vendas BR'];
-  if (!sheet) throw new Error('Aba "Vendas BR" não encontrada no arquivo.');
+  if (!sheet) throw new Error('Aba "Vendas BR" (Mercado Livre) ou "orders" (Shopee) não encontrada no arquivo.');
 
   const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { range: 5 });
   const processed = processSheet(rows).filter(r =>
