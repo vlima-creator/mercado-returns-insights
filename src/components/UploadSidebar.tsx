@@ -1,8 +1,9 @@
 import React, { useCallback, useState, useRef } from 'react';
-import { Upload, FileSpreadsheet, AlertCircle, Loader2, RotateCcw, Download, BookOpen, BarChart3 } from 'lucide-react';
+import { Upload, FileSpreadsheet, AlertCircle, Loader2, RotateCcw, Download, BookOpen } from 'lucide-react';
 import { useAppData } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { exportarXlsx } from '@/lib/exportXlsx';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export function UploadSidebar({ onOpenGuide }: { onOpenGuide: () => void }) {
   const { data, loadFile, resetData, isLoading, error, filteredVendas } = useAppData();
@@ -24,9 +25,9 @@ export function UploadSidebar({ onOpenGuide }: { onOpenGuide: () => void }) {
     <div className="w-72 min-h-screen border-r border-border bg-sidebar flex flex-col">
       <div className="p-6 border-b border-border">
         <h1 className="text-lg font-bold text-foreground flex items-center gap-2">
-          <BarChart3 className="h-5 w-5 text-emerald" /> Gestão de Devolução
+          <img src="/favicon.jpg" alt="Analytical X" className="h-6 w-6 rounded" /> Analytical X
         </h1>
-        <p className="text-xs text-muted-foreground mt-1">Análise inteligente • Mercado Livre</p>
+        <p className="text-xs text-muted-foreground mt-1">Gestão Inteligente de Devoluções</p>
       </div>
 
       <div className="p-4 flex-1 space-y-4">
@@ -107,6 +108,7 @@ export function UploadSidebar({ onOpenGuide }: { onOpenGuide: () => void }) {
         <Button onClick={onOpenGuide} variant="ghost" className="w-full text-xs text-muted-foreground">
           <BookOpen className="h-3.5 w-3.5 mr-2" /> Guia Completo
         </Button>
+        <ThemeToggle />
         <p className="text-[10px] text-muted-foreground text-center">
           Processamento 100% client-side • Nenhum dado enviado
         </p>

@@ -56,7 +56,7 @@ function addFooters(pdf: jsPDF, totalPages: number) {
     pdf.setFontSize(6.5);
     pdf.setTextColor(...COLORS.muted);
     pdf.text(
-      '© 2026 Desenvolvido por Vinicius Lima | CNPJ: 47.192.694/0001-70 · Todos os direitos reservados',
+      '© 2026 Analytical X | Desenvolvido por Vinicius Lima · CNPJ: 47.192.694/0001-70 · Todos os direitos reservados',
       PAGE.width / 2, PAGE.height - 6, { align: 'center' }
     );
     pdf.text(`${i} / ${totalPages}`, PAGE.width - PAGE.marginX, PAGE.height - 6, { align: 'right' });
@@ -283,7 +283,7 @@ export function generateAnalysisPdf(markdown: string, adUrl: string) {
   const ctx: PdfContext = { pdf, y: PAGE.marginTop, pageNum: 1 };
 
   // === COVER / Title block ===
-  addHeader(ctx, 'Análise de Anúncio — DevTrack ML');
+  addHeader(ctx, 'Análise de Anúncio — Analytical X');
 
   ctx.y = 30;
 
@@ -338,7 +338,7 @@ export function generateAnalysisPdf(markdown: string, adUrl: string) {
   const totalPages = pdf.getNumberOfPages();
   for (let i = 2; i <= totalPages; i++) {
     pdf.setPage(i);
-    addHeader({ pdf, y: 0, pageNum: i }, 'Análise de Anúncio — DevTrack ML');
+    addHeader({ pdf, y: 0, pageNum: i }, 'Análise de Anúncio — Analytical X');
   }
 
   return pdf;

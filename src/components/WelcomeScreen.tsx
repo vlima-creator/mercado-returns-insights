@@ -9,10 +9,10 @@ export function WelcomeScreen() {
             <BarChart3 className="h-10 w-10 text-emerald" />
           </div>
           <h2 className="text-3xl font-bold text-foreground mb-3">
-            Gestão de Devolução Inteligente
+            Analytical X
           </h2>
           <p className="text-muted-foreground text-sm max-w-md mx-auto">
-            Faça upload dos relatórios do Mercado Livre para análise completa de vendas, devoluções e insights acionáveis.
+            Faça upload dos relatórios de vendas para análise completa de devoluções e insights acionáveis.
           </p>
         </div>
 
