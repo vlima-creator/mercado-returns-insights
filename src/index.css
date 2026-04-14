@@ -6,55 +6,105 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 95%;
+    --background: 0 0% 100%;
+    --foreground: 220 20% 10%;
 
-    --card: 0 0% 5%;
-    --card-foreground: 0 0% 95%;
+    --card: 0 0% 98%;
+    --card-foreground: 220 20% 10%;
 
-    --popover: 0 0% 5%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 10%;
 
-    --primary: 160 59% 46%;
+    --primary: 270 100% 35%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 217 19% 15%;
-    --secondary-foreground: 0 0% 90%;
+    --secondary: 218 30% 93%;
+    --secondary-foreground: 218 83% 30%;
 
-    --muted: 220 14% 10%;
-    --muted-foreground: 0 0% 55%;
+    --muted: 220 14% 94%;
+    --muted-foreground: 220 10% 45%;
 
-    --accent: 217 91% 60%;
+    --accent: 218 83% 47%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 12%;
-    --input: 0 0% 12%;
-    --ring: 160 59% 46%;
+    --border: 220 13% 88%;
+    --input: 220 13% 88%;
+    --ring: 270 100% 35%;
 
     --radius: 0.75rem;
 
     /* Custom tokens */
-    --glass-bg: 0 0% 100% / 0.03;
-    --glass-border: 0 0% 100% / 0.08;
-    --glass-hover: 160 30% 40% / 0.15;
+    --glass-bg: 220 20% 10% / 0.03;
+    --glass-border: 220 20% 10% / 0.08;
+    --glass-hover: 270 50% 40% / 0.10;
     --glass-blur: 16px;
 
-    --emerald: 160 59% 46%;
+    --emerald: 100 64% 60%;
     --coral: 0 84% 60%;
-    --royal: 217 91% 60%;
+    --royal: 218 83% 47%;
     --amber: 38 92% 50%;
 
-    --sidebar-background: 0 0% 3%;
-    --sidebar-foreground: 0 0% 70%;
-    --sidebar-primary: 160 59% 46%;
+    --sidebar-background: 270 30% 97%;
+    --sidebar-foreground: 220 10% 35%;
+    --sidebar-primary: 270 100% 35%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 8%;
+    --sidebar-accent: 270 20% 93%;
+    --sidebar-accent-foreground: 220 20% 15%;
+    --sidebar-border: 220 13% 88%;
+    --sidebar-ring: 270 100% 35%;
+  }
+
+  .dark {
+    --background: 240 10% 4%;
+    --foreground: 0 0% 95%;
+
+    --card: 240 10% 7%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 240 10% 7%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 270 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 10% 14%;
+    --secondary-foreground: 0 0% 90%;
+
+    --muted: 240 10% 12%;
+    --muted-foreground: 0 0% 55%;
+
+    --accent: 218 83% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 8% 16%;
+    --input: 240 8% 16%;
+    --ring: 270 100% 50%;
+
+    /* Custom tokens */
+    --glass-bg: 0 0% 100% / 0.03;
+    --glass-border: 0 0% 100% / 0.08;
+    --glass-hover: 270 50% 50% / 0.15;
+    --glass-blur: 16px;
+
+    --emerald: 100 64% 50%;
+    --coral: 0 84% 60%;
+    --royal: 218 83% 55%;
+    --amber: 38 92% 50%;
+
+    --sidebar-background: 240 10% 5%;
+    --sidebar-foreground: 0 0% 70%;
+    --sidebar-primary: 270 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 10% 10%;
     --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 0 0% 10%;
-    --sidebar-ring: 160 59% 46%;
+    --sidebar-border: 240 8% 14%;
+    --sidebar-ring: 270 100% 50%;
   }
 }
 
@@ -78,12 +128,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(0 0% 20%);
+    background: hsl(var(--muted-foreground) / 0.3);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(0 0% 30%);
+    background: hsl(var(--muted-foreground) / 0.5);
   }
 }
 
@@ -99,6 +149,10 @@
     border-color: hsla(var(--glass-hover));
     background: hsla(var(--glass-hover));
     transform: translateY(-2px);
+    box-shadow: 0 8px 32px hsla(0 0% 0% / 0.15);
+  }
+
+  .dark .glass-card:hover {
     box-shadow: 0 8px 32px hsla(0 0% 0% / 0.6);
   }
 
@@ -157,8 +211,8 @@
   }
 
   @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 0 0 hsla(var(--emerald) / 0.3); }
-    50% { box-shadow: 0 0 20px 4px hsla(var(--emerald) / 0.15); }
+    0%, 100% { box-shadow: 0 0 0 0 hsla(var(--primary) / 0.3); }
+    50% { box-shadow: 0 0 20px 4px hsla(var(--primary) / 0.15); }
   }
 
   .pulse-glow {

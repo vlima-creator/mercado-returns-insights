@@ -24,7 +24,7 @@ function AppContent() {
         </div>
         <footer className="border-t border-border px-6 py-3 text-center">
           <p className="text-[10px] text-muted-foreground">
-            © 2026 Desenvolvido por Vinicius Lima | CNPJ: 47.192.694/0001-70 · Todos os direitos reservados
+            © 2026 Analytical X | Desenvolvido por Vinicius Lima · CNPJ: 47.192.694/0001-70 · Todos os direitos reservados
           </p>
         </footer>
       </div>
