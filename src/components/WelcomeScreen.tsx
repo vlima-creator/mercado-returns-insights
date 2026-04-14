@@ -1,12 +1,12 @@
-import { Upload, BarChart3, TrendingDown, Sparkles, Shield, Zap } from 'lucide-react';
+import { Upload, TrendingDown, Sparkles, Shield, Zap } from 'lucide-react';
 
 export function WelcomeScreen() {
   return (
     <div className="flex-1 flex items-center justify-center p-8">
       <div className="max-w-2xl text-center animate-fade-in">
         <div className="mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-emerald-glow pulse-glow mb-6">
-            <BarChart3 className="h-10 w-10 text-emerald" />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/10 pulse-glow mb-6">
+            <img src="/favicon.jpg" alt="Analytical X" className="h-10 w-10 rounded-lg" />
           </div>
           <h2 className="text-3xl font-bold text-foreground mb-3">
             Analytical X
