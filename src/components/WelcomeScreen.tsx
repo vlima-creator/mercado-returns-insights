@@ -12,7 +12,7 @@ export function WelcomeScreen() {
             Gestão de Devolução Inteligente
           </h2>
           <p className="text-muted-foreground text-sm max-w-md mx-auto">
-            Faça upload dos relatórios do Mercado Livre para análise completa de vendas, devoluções e insights acionáveis.
+            Faça upload dos relatórios do Mercado Livre ou Shopee para análise completa de vendas, devoluções e insights acionáveis.
           </p>
         </div>
 
