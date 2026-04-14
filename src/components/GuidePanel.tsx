@@ -75,14 +75,20 @@ export function GuidePanel({ onClose }: { onClose: () => void }) {
         <>
           <p className="text-foreground font-medium">Passo a passo para usar a ferramenta:</p>
           <ol className="space-y-2 list-decimal list-inside">
-            <li><strong className="text-foreground">Faça upload</strong> — Na barra lateral, clique em "Clique para selecionar" e escolha o seu <strong className="text-foreground">Relatório de Vendas do Mercado Livre</strong> (arquivo .xlsx com a aba "Vendas BR").</li>
+            <li><strong className="text-foreground">Faça upload</strong> — Na barra lateral, clique em "Clique para selecionar" e escolha o seu relatório de vendas:
+              <ul className="list-disc list-inside ml-4 mt-1 space-y-1">
+                <li><strong className="text-foreground">Mercado Livre:</strong> arquivo .xlsx com a aba "Vendas BR"</li>
+                <li><strong className="text-foreground">Shopee:</strong> arquivo .xlsx com a aba "orders"</li>
+              </ul>
+            </li>
+            <li><strong className="text-foreground">Detecção automática</strong> — O sistema identifica automaticamente o marketplace (Mercado Livre ou Shopee) pela estrutura do arquivo.</li>
             <li><strong className="text-foreground">Processe o arquivo</strong> — Clique em "Processar Arquivo". O sistema irá ler, validar e processar todas as linhas de vendas automaticamente.</li>
-            <li><strong className="text-foreground">Explore os módulos</strong> — Use as abas na parte superior para navegar entre os diferentes módulos de análise (Resumo, Janelas, Matriz vs Full, etc.).</li>
+            <li><strong className="text-foreground">Explore os módulos</strong> — Use as abas na parte superior para navegar entre os diferentes módulos de análise (Resumo, Janelas, Frete, etc.).</li>
             <li><strong className="text-foreground">Aplique filtros</strong> — Use a barra de filtros para ajustar o período, canal, e outras opções para refinar sua análise.</li>
             <li><strong className="text-foreground">Exporte</strong> — Clique em "Exportar Excel" na barra lateral para baixar um relatório completo em .xlsx com múltiplas abas.</li>
           </ol>
           <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3 mt-2">
-            <p className="text-emerald text-[11px]">🔒 <strong>Privacidade:</strong> Todo o processamento é feito 100% no seu navegador (client-side). Nenhum dado é enviado para servidores externos.</p>
+            <p className="text-emerald text-[11px]"><Shield className="inline h-3 w-3 mr-1" /><strong>Privacidade:</strong> Todo o processamento é feito 100% no seu navegador (client-side). Nenhum dado é enviado para servidores externos.</p>
           </div>
         </>
       ),
@@ -93,14 +99,25 @@ export function GuidePanel({ onClose }: { onClose: () => void }) {
       title: 'Como Identificamos Devoluções',
       content: (
         <>
-          <p>O sistema identifica devoluções automaticamente analisando a <strong className="text-foreground">coluna "Estado"</strong> (coluna D) do relatório de vendas. Existe uma lista de 25+ status que indicam que a venda é uma devolução.</p>
-          <p className="text-foreground font-medium mt-2">Exemplos de status de devolução:</p>
+          <p className="text-foreground font-medium">Mercado Livre:</p>
+          <p>O sistema identifica devoluções analisando a <strong className="text-foreground">coluna "Estado"</strong> (coluna D) do relatório de vendas. Existe uma lista de 25+ status que indicam que a venda é uma devolução.</p>
+          <p className="text-foreground font-medium mt-2">Exemplos de status (ML):</p>
           <ul className="space-y-1 list-disc list-inside">
             <li>"O comprador devolveu o produto" → <span className="text-emerald font-medium">Saudável</span></li>
             <li>"Descartamos o produto" → <span className="text-coral font-medium">Crítica</span></li>
             <li>"Devolução em andamento" → <span className="text-royal font-medium">Neutra</span></li>
-            <li>"Reclamo cerrado sin mediación" → <span className="text-emerald font-medium">Saudável</span></li>
           </ul>
+
+          <p className="text-foreground font-medium mt-3">Shopee:</p>
+          <p>O sistema identifica devoluções pela <strong className="text-foreground">coluna "Status do pedido"</strong>. Status como "Cancelado", "Devolução / Reembolso" e "Não pago" são tratados como devoluções.</p>
+          <p className="text-foreground font-medium mt-2">Exemplos de status (Shopee):</p>
+          <ul className="space-y-1 list-disc list-inside">
+            <li>"Cancelado" → <span className="text-coral font-medium">Crítica</span></li>
+            <li>"Devolução / Reembolso" → <span className="text-coral font-medium">Crítica</span></li>
+            <li>"Não pago" → <span className="text-coral font-medium">Crítica</span></li>
+            <li>"Concluído" → <span className="text-emerald font-medium">Venda normal</span></li>
+          </ul>
+
           <p className="mt-2"><strong className="text-foreground">Classificação das devoluções:</strong></p>
           <div className="grid grid-cols-3 gap-2 mt-1">
             <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-2 text-center">
@@ -116,7 +133,7 @@ export function GuidePanel({ onClose }: { onClose: () => void }) {
               <p className="text-[10px]">Em andamento. Ainda sem definição final.</p>
             </div>
           </div>
-          <p className="mt-2"><strong className="text-foreground">Canal (Matriz vs Full):</strong> Identificado pela <strong className="text-foreground">coluna "Forma de entrega"</strong> (coluna AX). Se contiver "Mercado Envios Full", é classificado como <strong className="text-foreground">Full (Fulfillment)</strong>. Todo o restante é <strong className="text-foreground">Matriz</strong>.</p>
+          <p className="mt-2"><strong className="text-foreground">Canal (Matriz vs Full):</strong> No Mercado Livre, identificado pela coluna "Forma de entrega". Na Shopee, identificado pelo campo "Opção de envio".</p>
         </>
       ),
     },
@@ -133,7 +150,7 @@ export function GuidePanel({ onClose }: { onClose: () => void }) {
           <p><strong className="text-foreground">O que significa:</strong></p>
           <ul className="list-disc list-inside space-y-1">
             <li>Quanto maior, mais problemas com seus produtos ou anúncios</li>
-            <li>Benchmark Mercado Livre: <strong className="text-foreground">3-5%</strong> é considerado bom</li>
+            <li>Benchmark Mercado Livre: <strong className="text-foreground">3-5%</strong> é considerado bom. Shopee: <strong className="text-foreground">2-4%</strong> é referência saudável</li>
             <li>Acima de 10% indica problemas sérios que exigem ação imediata</li>
           </ul>
           <p className="mt-2"><strong className="text-foreground">Exemplo:</strong> 100 vendas, 5 devoluções = <span className="text-emerald font-mono font-bold">5%</span> de taxa de devolução</p>
@@ -251,7 +268,7 @@ export function GuidePanel({ onClose }: { onClose: () => void }) {
             </div>
             <div>
               <p className="text-foreground font-medium">Matriz vs Full</p>
-              <p>Compara a performance entre os canais. <strong className="text-foreground">Matriz</strong> = seu estoque próprio. <strong className="text-foreground">Full</strong> = estoque no Fulfillment do ML. Identifica se problemas vêm de qualidade (Matriz) ou logística (Full).</p>
+              <p>Compara a performance entre os canais. <strong className="text-foreground">Matriz</strong> = seu estoque próprio. <strong className="text-foreground">Full</strong> = estoque no Fulfillment do marketplace. Identifica se problemas vêm de qualidade (Matriz) ou logística (Full). Disponível para Mercado Livre e Shopee.</p>
             </div>
             <div>
               <p className="text-foreground font-medium">Frete</p>
@@ -278,7 +295,7 @@ export function GuidePanel({ onClose }: { onClose: () => void }) {
             </div>
             <div>
               <p className="text-foreground font-medium">IA Anúncios</p>
-              <p>Cole a URL de um anúncio do Mercado Livre para receber um diagnóstico inteligente com sugestões de melhoria para título, fotos, descrição e palavras-chave.</p>
+              <p>Cole a URL de um anúncio do Mercado Livre para receber um diagnóstico inteligente com sugestões de melhoria para título, fotos, descrição e palavras-chave. (Funcionalidade exclusiva para anúncios do Mercado Livre)</p>
             </div>
           </div>
         </>

@@ -27,7 +27,7 @@ export function UploadSidebar({ onOpenGuide }: { onOpenGuide: () => void }) {
         <h1 className="text-lg font-bold text-foreground flex items-center gap-2">
           <BarChart3 className="h-5 w-5 text-emerald" /> Gestão de Devolução
         </h1>
-        <p className="text-xs text-muted-foreground mt-1">Análise inteligente • Mercado Livre</p>
+        <p className="text-xs text-muted-foreground mt-1">Análise inteligente • Mercado Livre & Shopee</p>
       </div>
 
       <div className="p-4 flex-1 space-y-4">
