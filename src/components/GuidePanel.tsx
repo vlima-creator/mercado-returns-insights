@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import {
   BookOpen, ChevronDown, ChevronRight, BarChart3, TrendingDown, DollarSign,
-  PackageX, Shield, XCircle, MinusCircle, Receipt, Truck, Target,
-  Megaphone, Calculator, Upload, Filter, Download, ArrowLeft
+  PackageX, Shield, Target, Download, ArrowLeft, Rocket, FileDown,
+  Calculator, Lightbulb, Sparkles, ShoppingBag, Store
 } from 'lucide-react';
 
 interface Section {
@@ -12,8 +12,8 @@ interface Section {
   content: React.ReactNode;
 }
 
-function SectionAccordion({ section }: { section: Section }) {
-  const [open, setOpen] = useState(false);
+function SectionAccordion({ section, defaultOpen = false }: { section: Section; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="glass-static overflow-hidden">
       <button
@@ -38,352 +38,326 @@ function FormulaBox({ formula, description }: { formula: string; description: st
   );
 }
 
-function IndicatorTable({ rows }: { rows: { level: string; color: string; ranges: string[] }[] }) {
+function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
   return (
-    <table className="w-full text-xs border border-border rounded-lg overflow-hidden">
-      <thead>
-        <tr className="bg-muted/30">
-          <th className="py-2 px-3 text-left text-muted-foreground font-semibold">Nível</th>
-          {rows[0]?.ranges.map((_, i) => (
-            <th key={i} className="py-2 px-3 text-center text-muted-foreground font-semibold">
-              {['Taxa Devolução', 'Prod. Problemáticos', 'Impacto Financeiro'][i]}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map(row => (
-          <tr key={row.level} className="border-t border-border/50">
-            <td className={`py-2 px-3 font-bold ${row.color}`}>{row.level}</td>
-            {row.ranges.map((r, i) => (
-              <td key={i} className="py-2 px-3 text-center font-mono">{r}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="flex gap-3">
+      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/15 text-primary font-bold text-xs flex items-center justify-center border border-primary/30">
+        {n}
+      </div>
+      <div className="flex-1">
+        <p className="text-foreground font-semibold text-xs mb-1">{title}</p>
+        <div className="text-[11px]">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function ChannelCard({ icon, title, color, children }: { icon: React.ReactNode; title: string; color: string; children: React.ReactNode }) {
+  return (
+    <div className={`border rounded-lg p-3 space-y-2 ${color}`}>
+      <div className="flex items-center gap-2">
+        {icon}
+        <p className="font-bold text-xs text-foreground">{title}</p>
+      </div>
+      <div className="text-[11px] space-y-2">{children}</div>
+    </div>
   );
 }
 
 export function GuidePanel({ onClose }: { onClose: () => void }) {
   const sections: Section[] = [
+    // 1. COMO COMEÇAR
     {
       id: 'getting-started',
-      icon: <Upload className="h-4 w-4" />,
-      title: 'Como Começar',
+      icon: <Rocket className="h-4 w-4" />,
+      title: '1. Como Começar — Passo a Passo',
       content: (
         <>
-          <p className="text-foreground font-medium">Passo a passo para usar a ferramenta:</p>
-          <ol className="space-y-2 list-decimal list-inside">
-            <li><strong className="text-foreground">Faça upload</strong> — Na barra lateral, clique em "Clique para selecionar" e escolha o seu relatório de vendas:
-              <ul className="list-disc list-inside ml-4 mt-1 space-y-1">
-                <li><strong className="text-foreground">Mercado Livre:</strong> arquivo .xlsx com a aba "Vendas BR"</li>
-                <li><strong className="text-foreground">Shopee:</strong> arquivo .xlsx com a aba "orders"</li>
-              </ul>
-            </li>
-            <li><strong className="text-foreground">Detecção automática</strong> — O sistema identifica automaticamente o marketplace (Mercado Livre ou Shopee) pela estrutura do arquivo.</li>
-            <li><strong className="text-foreground">Processe o arquivo</strong> — Clique em "Processar Arquivo". O sistema irá ler, validar e processar todas as linhas de vendas automaticamente.</li>
-            <li><strong className="text-foreground">Explore os módulos</strong> — Use as abas na parte superior para navegar entre os diferentes módulos de análise (Resumo, Janelas, Frete, etc.).</li>
-            <li><strong className="text-foreground">Aplique filtros</strong> — Use a barra de filtros para ajustar o período, canal, e outras opções para refinar sua análise.</li>
-            <li><strong className="text-foreground">Exporte</strong> — Clique em "Exportar Excel" na barra lateral para baixar um relatório completo em .xlsx com múltiplas abas.</li>
-          </ol>
-          <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3 mt-2">
-            <p className="text-emerald text-[11px]"><Shield className="inline h-3 w-3 mr-1" /><strong>Privacidade:</strong> Todo o processamento é feito 100% no seu navegador (client-side). Nenhum dado é enviado para servidores externos.</p>
+          <p>Em poucos minutos você terá um diagnóstico completo da sua operação de devoluções. Siga a ordem abaixo:</p>
+          <div className="space-y-3 mt-2">
+            <Step n={1} title="Baixe o relatório do marketplace">
+              Acesse o painel do <strong className="text-foreground">Mercado Livre</strong> ou da <strong className="text-foreground">Shopee</strong> e exporte o relatório de vendas em <code className="bg-muted/40 px-1 rounded">.xlsx</code>. Veja a seção <em>"Onde Baixar os Relatórios"</em> para o caminho exato em cada canal.
+            </Step>
+            <Step n={2} title="Faça o upload">
+              Na barra lateral, clique em <strong className="text-foreground">"Clique para selecionar"</strong> e escolha o arquivo. A ferramenta detecta automaticamente se é Mercado Livre ou Shopee pela estrutura do arquivo.
+            </Step>
+            <Step n={3} title="Processe o arquivo">
+              Clique em <strong className="text-foreground">"Processar Arquivo"</strong>. Todo o processamento ocorre <strong className="text-emerald">100% no seu navegador</strong> — nenhum dado é enviado para servidores externos.
+            </Step>
+            <Step n={4} title="Explore os módulos">
+              Use as abas na parte superior para navegar entre <strong className="text-foreground">Resumo, Janelas, Matriz vs Full, Frete, Motivos, Ads, Anúncios, Simulador</strong> e <strong className="text-foreground">IA Anúncios</strong>.
+            </Step>
+            <Step n={5} title="Aplique filtros">
+              Use a barra de filtros para ajustar <strong className="text-foreground">período (30 a 180 dias)</strong>, canal (Matriz/Full), agrupamento (SKU/MLB) e refinar a análise.
+            </Step>
+            <Step n={6} title="Exporte resultados">
+              Clique em <strong className="text-foreground">"Exportar Excel"</strong> para baixar um relatório consolidado com múltiplas abas, respeitando os filtros ativos.
+            </Step>
+          </div>
+          <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3 mt-3">
+            <p className="text-emerald text-[11px]"><Shield className="inline h-3 w-3 mr-1" /><strong>Privacidade total:</strong> Todo o processamento é feito no seu navegador (client-side). Seus dados nunca saem do seu computador.</p>
           </div>
         </>
       ),
     },
+
+    // 2. ONDE BAIXAR
     {
-      id: 'identification',
+      id: 'where-to-download',
+      icon: <FileDown className="h-4 w-4" />,
+      title: '2. Onde Baixar os Relatórios',
+      content: (
+        <>
+          <p>Cada marketplace tem um caminho diferente. Use exatamente o relatório indicado abaixo para garantir compatibilidade.</p>
+
+          <ChannelCard
+            icon={<Store className="h-4 w-4 text-amber-brand" />}
+            title="Mercado Livre — Relatório de Vendas"
+            color="bg-amber/10 border-amber-brand/30"
+          >
+            <p className="text-foreground"><strong>Importante:</strong> Para o Mercado Livre usamos APENAS o <strong className="text-amber-brand">Relatório de Vendas</strong>. Não use o relatório de devoluções, faturamento ou reclamações.</p>
+            <p className="text-foreground font-semibold mt-2">Passo a passo:</p>
+            <ol className="list-decimal list-inside space-y-1">
+              <li>Acesse <code className="bg-muted/40 px-1 rounded">mercadolivre.com.br</code> e faça login na sua conta de vendedor</li>
+              <li>Vá em <strong className="text-foreground">Vendas → Relatórios</strong></li>
+              <li>Selecione <strong className="text-foreground">"Vendas"</strong> (NÃO selecione devoluções ou outros)</li>
+              <li>Defina o período desejado (recomendado: <strong className="text-foreground">últimos 180 dias</strong>)</li>
+              <li>Clique em <strong className="text-foreground">Gerar relatório</strong> e aguarde a geração</li>
+              <li>Baixe o arquivo <code className="bg-muted/40 px-1 rounded">.xlsx</code></li>
+            </ol>
+            <p className="mt-2">O arquivo deve conter a aba <strong className="text-foreground">"Vendas BR"</strong> com colunas como Estado, SKU, Forma de entrega, Preço, etc.</p>
+          </ChannelCard>
+
+          <ChannelCard
+            icon={<ShoppingBag className="h-4 w-4 text-coral" />}
+            title="Shopee — Relatório de Pedidos"
+            color="bg-coral/10 border-coral/30"
+          >
+            <p className="text-foreground font-semibold">Passo a passo:</p>
+            <ol className="list-decimal list-inside space-y-1">
+              <li>Acesse o <strong className="text-foreground">Seller Center</strong> da Shopee (<code className="bg-muted/40 px-1 rounded">seller.shopee.com.br</code>)</li>
+              <li>No menu lateral, vá em <strong className="text-foreground">Pedidos → Meus Pedidos</strong></li>
+              <li>Clique em <strong className="text-foreground">"Exportar"</strong> no canto superior direito</li>
+              <li>Selecione o período (recomendado: <strong className="text-foreground">últimos 180 dias</strong>)</li>
+              <li>Escolha o formato <strong className="text-foreground">.xlsx</strong></li>
+              <li>Baixe o arquivo gerado</li>
+            </ol>
+            <p className="mt-2">O arquivo deve conter a aba <strong className="text-foreground">"orders"</strong> com colunas como Status do pedido, SKU, Opção de envio, Valor total, etc.</p>
+          </ChannelCard>
+
+          <div className="bg-royal/10 border border-royal/20 rounded-lg p-3 mt-2">
+            <p className="text-[11px]"><strong className="text-royal">Dica:</strong> Use sempre o <strong>maior período possível (180 dias)</strong>. A ferramenta permite filtrar janelas menores depois, mas precisa dos dados brutos para análises completas.</p>
+          </div>
+        </>
+      ),
+    },
+
+    // 3. METODOLOGIA
+    {
+      id: 'methodology',
       icon: <Shield className="h-4 w-4" />,
-      title: 'Como Identificamos Devoluções',
+      title: '3. Metodologia — Como os Cálculos São Feitos',
       content: (
         <>
-          <p className="text-foreground font-medium">Mercado Livre:</p>
-          <p>O sistema identifica devoluções analisando a <strong className="text-foreground">coluna "Estado"</strong> (coluna D) do relatório de vendas. Existe uma lista de 25+ status que indicam que a venda é uma devolução.</p>
-          <p className="text-foreground font-medium mt-2">Exemplos de status (ML):</p>
-          <ul className="space-y-1 list-disc list-inside">
-            <li>"O comprador devolveu o produto" → <span className="text-emerald font-medium">Saudável</span></li>
-            <li>"Descartamos o produto" → <span className="text-coral font-medium">Crítica</span></li>
-            <li>"Devolução em andamento" → <span className="text-royal font-medium">Neutra</span></li>
-          </ul>
+          <p>A metodologia varia por marketplace porque cada um expõe os dados de forma diferente. Veja em detalhes:</p>
 
-          <p className="text-foreground font-medium mt-3">Shopee:</p>
-          <p>O sistema identifica devoluções pela <strong className="text-foreground">coluna "Status do pedido"</strong>. Status como "Cancelado", "Devolução / Reembolso" e "Não pago" são tratados como devoluções.</p>
-          <p className="text-foreground font-medium mt-2">Exemplos de status (Shopee):</p>
-          <ul className="space-y-1 list-disc list-inside">
-            <li>"Cancelado" → <span className="text-coral font-medium">Crítica</span></li>
-            <li>"Devolução / Reembolso" → <span className="text-coral font-medium">Crítica</span></li>
-            <li>"Não pago" → <span className="text-coral font-medium">Crítica</span></li>
-            <li>"Concluído" → <span className="text-emerald font-medium">Venda normal</span></li>
-          </ul>
+          <ChannelCard
+            icon={<Store className="h-4 w-4 text-amber-brand" />}
+            title="Mercado Livre"
+            color="bg-amber/10 border-amber-brand/30"
+          >
+            <p><strong className="text-foreground">Identificação de devolução:</strong> análise da coluna <code className="bg-muted/40 px-1 rounded">Estado</code> (coluna D). Mais de 25 status são reconhecidos como devolução.</p>
+            <p><strong className="text-foreground">Classificação:</strong></p>
+            <ul className="list-disc list-inside space-y-1 ml-2">
+              <li><span className="text-emerald font-medium">Saudável</span> — produto volta ao estoque (ex.: "O comprador devolveu o produto")</li>
+              <li><span className="text-coral font-medium">Crítica</span> — produto perdido (ex.: "Descartamos o produto", "Não devolvido")</li>
+              <li><span className="text-royal font-medium">Neutra</span> — em andamento (ex.: "Devolução em andamento")</li>
+            </ul>
+            <p><strong className="text-foreground">Canal (Matriz vs Full):</strong> identificado pela coluna <code className="bg-muted/40 px-1 rounded">Forma de entrega</code>. "Mercado Envios Full" = Full, demais = Matriz.</p>
+            <p><strong className="text-foreground">Origem (Orgânico vs Ads):</strong> identificado por coluna específica do relatório quando disponível.</p>
+          </ChannelCard>
 
-          <p className="mt-2"><strong className="text-foreground">Classificação das devoluções:</strong></p>
-          <div className="grid grid-cols-3 gap-2 mt-1">
-            <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-2 text-center">
-              <p className="text-emerald font-bold text-sm">Saudável</p>
-              <p className="text-[10px]">Produto volta ao estoque. Perda apenas de taxas/frete.</p>
-            </div>
-            <div className="bg-coral/10 border border-coral/20 rounded-lg p-2 text-center">
-              <p className="text-coral font-bold text-sm">Crítica</p>
-              <p className="text-[10px]">Produto perdido. Prejuízo total (produto + taxas).</p>
-            </div>
-            <div className="bg-royal/10 border border-royal/20 rounded-lg p-2 text-center">
-              <p className="text-royal font-bold text-sm">Neutra</p>
-              <p className="text-[10px]">Em andamento. Ainda sem definição final.</p>
-            </div>
-          </div>
-          <p className="mt-2"><strong className="text-foreground">Canal (Matriz vs Full):</strong> No Mercado Livre, identificado pela coluna "Forma de entrega". Na Shopee, identificado pelo campo "Opção de envio".</p>
-        </>
-      ),
-    },
-    {
-      id: 'taxa-devolucao',
-      icon: <TrendingDown className="h-4 w-4" />,
-      title: '1. Taxa de Devolução (%)',
-      content: (
-        <>
-          <FormulaBox
-            formula="Taxa de Devolução = (Total de Devoluções ÷ Total de Vendas) × 100"
-            description="Percentual de vendas que resultaram em devolução."
-          />
-          <p><strong className="text-foreground">O que significa:</strong></p>
-          <ul className="list-disc list-inside space-y-1">
-            <li>Quanto maior, mais problemas com seus produtos ou anúncios</li>
-            <li>Benchmark Mercado Livre: <strong className="text-foreground">3-5%</strong> é considerado bom. Shopee: <strong className="text-foreground">2-4%</strong> é referência saudável</li>
-            <li>Acima de 10% indica problemas sérios que exigem ação imediata</li>
-          </ul>
-          <p className="mt-2"><strong className="text-foreground">Exemplo:</strong> 100 vendas, 5 devoluções = <span className="text-emerald font-mono font-bold">5%</span> de taxa de devolução</p>
-        </>
-      ),
-    },
-    {
-      id: 'impacto-financeiro',
-      icon: <DollarSign className="h-4 w-4" />,
-      title: '2. Impacto Financeiro (R$)',
-      content: (
-        <>
-          <FormulaBox
-            formula="Impacto Financeiro = Preço Médio × Total de Devoluções"
-            description="Quanto você deixou de ganhar com as devoluções."
-          />
-          <p><strong className="text-foreground">O que significa:</strong></p>
-          <ul className="list-disc list-inside space-y-1">
-            <li>Mostra o valor total de receita perdida em devoluções</li>
-            <li>Não inclui custos de reembolso/logística (apenas perda de venda)</li>
-            <li>Ajuda a priorizar quais SKUs focar</li>
-          </ul>
-          <p className="mt-2"><strong className="text-foreground">Exemplo:</strong> Preço médio R$ 100, 10 devoluções = <span className="text-coral font-mono font-bold">-R$ 1.000</span> de impacto</p>
-        </>
-      ),
-    },
-    {
-      id: 'perda-total-parcial',
-      icon: <PackageX className="h-4 w-4" />,
-      title: '3. Perda Total vs Perda Parcial',
-      content: (
-        <>
-          <FormulaBox
-            formula="Perda Total = Valor do Produto + Taxas de Envio + Tarifa de Venda (para devoluções Críticas)"
-            description="Quando o produto é perdido: prejuízo integral."
-          />
-          <FormulaBox
-            formula="Perda Parcial = Taxas de Envio + Tarifa de Venda (para devoluções Saudáveis/Neutras)"
-            description="Quando o produto volta ao estoque: perda apenas de custos operacionais."
-          />
-          <p><strong className="text-foreground">Diferenças:</strong></p>
-          <div className="grid grid-cols-2 gap-2 mt-1">
-            <div className="bg-coral/10 border border-coral/20 rounded-lg p-2">
-              <p className="text-coral font-bold text-xs">Perda Total</p>
-              <p className="text-[10px]">Produto descartado ou não devolvido. Você perde o valor do produto E as taxas cobradas pelo ML.</p>
-            </div>
-            <div className="bg-amber/10 border border-amber-brand/20 rounded-lg p-2">
-              <p className="text-amber-brand font-bold text-xs">Perda Parcial</p>
-              <p className="text-[10px]">Produto devolvido ao estoque. Você recupera o produto, mas perde as taxas de envio e venda.</p>
-            </div>
+          <ChannelCard
+            icon={<ShoppingBag className="h-4 w-4 text-coral" />}
+            title="Shopee"
+            color="bg-coral/10 border-coral/30"
+          >
+            <p><strong className="text-foreground">Identificação de devolução:</strong> análise da coluna <code className="bg-muted/40 px-1 rounded">Status do pedido</code>.</p>
+            <p><strong className="text-foreground">Classificação:</strong></p>
+            <ul className="list-disc list-inside space-y-1 ml-2">
+              <li><span className="text-coral font-medium">Crítica</span> — "Cancelado", "Devolução / Reembolso", "Não pago"</li>
+              <li><span className="text-emerald font-medium">Venda normal</span> — "Concluído", "Enviado", "A enviar"</li>
+            </ul>
+            <p><strong className="text-foreground">Canal (Matriz vs Full):</strong> identificado pelo campo <code className="bg-muted/40 px-1 rounded">Opção de envio</code>. Envio gerenciado pela Shopee = Full, demais = Matriz.</p>
+            <p><strong className="text-foreground">Normalização:</strong> valores totais são distribuídos proporcionalmente por item quando o pedido contém múltiplos SKUs.</p>
+          </ChannelCard>
+
+          <div className="bg-background/60 border border-border rounded-lg p-3 mt-2 space-y-2">
+            <p className="text-foreground font-semibold text-xs">Períodos de análise (Janelas)</p>
+            <p>A ferramenta calcula automaticamente <strong className="text-foreground">6 janelas móveis</strong> a partir da data mais recente do relatório: <strong>30, 60, 90, 120, 150 e 180 dias</strong>.</p>
+            <p>Todas as métricas (taxa, impacto, score) são recalculadas para cada janela quando você muda o filtro de período. Isso permite identificar tendências e sazonalidade.</p>
           </div>
         </>
       ),
     },
+
+    // 4. INDICADORES
     {
-      id: 'score-risco',
-      icon: <Target className="h-4 w-4" />,
-      title: '4. Score de Risco por SKU/Anúncio',
-      content: (
-        <>
-          <FormulaBox
-            formula="Score de Risco = (Taxa de Devolução do SKU × Impacto Financeiro do SKU) ÷ 100"
-            description="Combina frequência e severidade em um único número para priorizar ações."
-          />
-          <p><strong className="text-foreground">Interpretação do Score:</strong></p>
-          <div className="grid grid-cols-3 gap-2 mt-1">
-            <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-2 text-center">
-              <p className="text-emerald font-bold text-sm">&lt; 100</p>
-              <p className="text-[10px]">Baixo risco</p>
-            </div>
-            <div className="bg-amber/10 border border-amber-brand/20 rounded-lg p-2 text-center">
-              <p className="text-amber-brand font-bold text-sm">100 - 500</p>
-              <p className="text-[10px]">Atenção</p>
-            </div>
-            <div className="bg-coral/10 border border-coral/20 rounded-lg p-2 text-center">
-              <p className="text-coral font-bold text-sm">&gt; 500</p>
-              <p className="text-[10px]">Alto risco</p>
-            </div>
-          </div>
-          <p className="mt-2">Um SKU com taxa alta mas poucas vendas terá score menor que um SKU com taxa moderada e muitas vendas — priorizando o que causa mais prejuízo real.</p>
-        </>
-      ),
-    },
-    {
-      id: 'indicadores-saude',
+      id: 'indicators',
       icon: <BarChart3 className="h-4 w-4" />,
-      title: '5. Indicadores de Saúde',
-      content: (
-        <>
-          <p>A tabela de indicadores classifica sua operação em 4 níveis:</p>
-          <IndicatorTable rows={[
-            { level: 'Excelente', color: 'text-emerald', ranges: ['< 2%', '0-1 SKUs', '< R$ 500'] },
-            { level: 'Bom', color: 'text-royal', ranges: ['2-5%', '2-3 SKUs', 'R$ 500 - R$ 2k'] },
-            { level: 'Atenção', color: 'text-amber-brand', ranges: ['5-10%', '4-5 SKUs', 'R$ 2k - R$ 5k'] },
-            { level: 'Crítico', color: 'text-coral', ranges: ['> 10%', '> 5 SKUs', '> R$ 5k'] },
-          ]} />
-          <p className="mt-2"><strong className="text-foreground">Produtos Problemáticos</strong> = SKUs com taxa de devolução acima de 10%.</p>
-        </>
-      ),
-    },
-    {
-      id: 'modulos',
-      icon: <BarChart3 className="h-4 w-4" />,
-      title: '6. Módulos de Análise (Abas)',
+      title: '4. Indicadores — O Que Cada Métrica Significa',
       content: (
         <>
           <div className="space-y-3">
             <div>
-              <p className="text-foreground font-medium">Resumo</p>
-              <p>Visão geral com todos os KPIs, gráfico de rosca (classificação das devoluções) e top 5 produtos com mais devoluções. É o ponto de partida da análise.</p>
+              <p className="text-foreground font-semibold text-xs flex items-center gap-2 mb-1"><TrendingDown className="h-3 w-3 text-coral" /> Taxa de Devolução (%)</p>
+              <FormulaBox
+                formula="Taxa = (Devoluções ÷ Total de Vendas) × 100"
+                description="Percentual de vendas que resultaram em devolução."
+              />
+              <p className="mt-1">Benchmark saudável: <strong className="text-foreground">Mercado Livre 3-5%</strong>, <strong className="text-foreground">Shopee 2-4%</strong>. Acima de 10% = ação imediata.</p>
             </div>
+
             <div>
-              <p className="text-foreground font-medium">Janelas</p>
-              <p>Gráfico de linhas mostrando a evolução de vendas, devoluções e taxa ao longo de 6 períodos (30d a 180d). Eixo Y duplo: quantidade à esquerda, taxa (%) à direita. Identifica tendências sazonais.</p>
+              <p className="text-foreground font-semibold text-xs flex items-center gap-2 mb-1"><DollarSign className="h-3 w-3 text-coral" /> Impacto Financeiro (R$)</p>
+              <FormulaBox
+                formula="Impacto = Preço Médio × Total de Devoluções"
+                description="Receita perdida em devoluções no período."
+              />
             </div>
+
             <div>
-              <p className="text-foreground font-medium">Matriz vs Full</p>
-              <p>Compara a performance entre os canais. <strong className="text-foreground">Matriz</strong> = seu estoque próprio. <strong className="text-foreground">Full</strong> = estoque no Fulfillment do marketplace. Identifica se problemas vêm de qualidade (Matriz) ou logística (Full). Disponível para Mercado Livre e Shopee.</p>
+              <p className="text-foreground font-semibold text-xs flex items-center gap-2 mb-1"><PackageX className="h-3 w-3 text-coral" /> Perda Total vs Perda Parcial</p>
+              <FormulaBox
+                formula="Perda Total = Valor do Produto + Frete + Tarifa  (devoluções Críticas)"
+                description="Produto perdido — prejuízo integral."
+              />
+              <FormulaBox
+                formula="Perda Parcial = Frete + Tarifa  (devoluções Saudáveis/Neutras)"
+                description="Produto volta ao estoque — perda apenas operacional."
+              />
             </div>
+
             <div>
-              <p className="text-foreground font-medium">Frete</p>
-              <p>Análise por forma de entrega (Flex, Full, Mercado Envios, etc.). Identifica qual método de envio tem mais devoluções — pode indicar problemas de embalagem ou atrasos.</p>
+              <p className="text-foreground font-semibold text-xs flex items-center gap-2 mb-1"><Target className="h-3 w-3 text-coral" /> Score de Risco por SKU</p>
+              <FormulaBox
+                formula="Score = (Taxa do SKU × Impacto do SKU) ÷ 100"
+                description="Combina frequência e severidade para priorizar ações."
+              />
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-2 text-center">
+                  <p className="text-emerald font-bold text-xs">&lt; 100</p>
+                  <p className="text-[10px]">Baixo risco</p>
+                </div>
+                <div className="bg-amber/10 border border-amber-brand/20 rounded-lg p-2 text-center">
+                  <p className="text-amber-brand font-bold text-xs">100 - 500</p>
+                  <p className="text-[10px]">Atenção</p>
+                </div>
+                <div className="bg-coral/10 border border-coral/20 rounded-lg p-2 text-center">
+                  <p className="text-coral font-bold text-xs">&gt; 500</p>
+                  <p className="text-[10px]">Alto risco</p>
+                </div>
+              </div>
             </div>
+
             <div>
-              <p className="text-foreground font-medium">Motivos</p>
-              <p>Ranking dos principais motivos de devolução. Categorização inteligente para motivos vazios (analisa o estado e descrição do status para inferir o motivo). Interpretação:<br/>
-              • Maioria "Descrição não corresponde" → Revise seu anúncio<br/>
-              • Maioria "Defeito" → Revise qualidade do produto<br/>
-              • Maioria "Danificado" → Revise embalagem/logística</p>
-            </div>
-            <div>
-              <p className="text-foreground font-medium">Ads</p>
-              <p>Compara vendas orgânicas vs publicidade. Se anúncios pagos trazem mais devoluções, pode indicar problema na segmentação. Ajuda a otimizar ROI de publicidade.</p>
-            </div>
-            <div>
-              <p className="text-foreground font-medium">Anúncios</p>
-              <p>Ranking completo de produtos por Score de Risco. Mostra total de anúncios com devolução e taxa de concentração dos top 10. Alterne entre visualização por SKU ou MLB (# de anúncio) com o filtro "Agrupar por".</p>
-            </div>
-            <div>
-              <p className="text-foreground font-medium">Simulador</p>
-              <p>Slider interativo para simular a redução percentual nas devoluções. Calcula a economia financeira projetada e mostra a nova taxa de devolução. Ajuda a priorizar ações com maior ROI.</p>
-            </div>
-            <div>
-              <p className="text-foreground font-medium">IA Anúncios</p>
-              <p>Cole a URL de um anúncio do Mercado Livre para receber um diagnóstico inteligente com sugestões de melhoria para título, fotos, descrição e palavras-chave. (Funcionalidade exclusiva para anúncios do Mercado Livre)</p>
+              <p className="text-foreground font-semibold text-xs mb-1">Indicadores de Saúde da Operação</p>
+              <table className="w-full text-[10px] border border-border rounded-lg overflow-hidden">
+                <thead>
+                  <tr className="bg-muted/30">
+                    <th className="py-2 px-2 text-left text-muted-foreground">Nível</th>
+                    <th className="py-2 px-2 text-center text-muted-foreground">Taxa</th>
+                    <th className="py-2 px-2 text-center text-muted-foreground">SKUs Problem.</th>
+                    <th className="py-2 px-2 text-center text-muted-foreground">Impacto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-t border-border/50"><td className="py-2 px-2 font-bold text-emerald">Excelente</td><td className="py-2 px-2 text-center font-mono">&lt; 2%</td><td className="py-2 px-2 text-center font-mono">0-1</td><td className="py-2 px-2 text-center font-mono">&lt; R$ 500</td></tr>
+                  <tr className="border-t border-border/50"><td className="py-2 px-2 font-bold text-royal">Bom</td><td className="py-2 px-2 text-center font-mono">2-5%</td><td className="py-2 px-2 text-center font-mono">2-3</td><td className="py-2 px-2 text-center font-mono">R$ 500-2k</td></tr>
+                  <tr className="border-t border-border/50"><td className="py-2 px-2 font-bold text-amber-brand">Atenção</td><td className="py-2 px-2 text-center font-mono">5-10%</td><td className="py-2 px-2 text-center font-mono">4-5</td><td className="py-2 px-2 text-center font-mono">R$ 2k-5k</td></tr>
+                  <tr className="border-t border-border/50"><td className="py-2 px-2 font-bold text-coral">Crítico</td><td className="py-2 px-2 text-center font-mono">&gt; 10%</td><td className="py-2 px-2 text-center font-mono">&gt; 5</td><td className="py-2 px-2 text-center font-mono">&gt; R$ 5k</td></tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </>
       ),
     },
+
+    // 5. FUNCIONALIDADES
     {
-      id: 'filtros',
-      icon: <Filter className="h-4 w-4" />,
-      title: '7. Filtros e Personalização',
+      id: 'features',
+      icon: <Sparkles className="h-4 w-4" />,
+      title: '5. Funcionalidades — Recursos do App',
       content: (
         <>
-          <p>A barra de filtros permite ajustar todos os dados do dashboard em tempo real:</p>
-          <ul className="list-disc list-inside space-y-2 mt-2">
-            <li><strong className="text-foreground">Janela (dias):</strong> Período de análise (30, 60, 90, 120, 150 ou 180 dias). Filtra vendas a partir da data mais recente do relatório. <span className="text-emerald">Ao mudar, TODAS as abas e métricas refletem o novo período.</span></li>
-            <li><strong className="text-foreground">Canal:</strong> Filtre por Todos, Matriz ou Full para análise segmentada.</li>
-            <li><strong className="text-foreground">Só Ads:</strong> Mostra apenas vendas originadas de publicidade.</li>
-            <li><strong className="text-foreground">Top 10:</strong> Mostra apenas os 10 SKUs com mais devoluções.</li>
-            <li><strong className="text-foreground">Agrupar por (SKU/MLB):</strong> Alterna a visualização entre código do produto (SKU) e código do anúncio (MLB) nas análises e rankings.</li>
-          </ul>
+          <p>Cada aba e recurso da ferramenta tem uma função específica:</p>
+          <div className="space-y-2 mt-2">
+            <div className="border-l-2 border-primary pl-3"><p className="text-foreground font-semibold text-xs">Resumo</p><p>KPIs principais, gráfico de classificação das devoluções e top 5 produtos com mais devoluções. Ponto de partida.</p></div>
+            <div className="border-l-2 border-primary pl-3"><p className="text-foreground font-semibold text-xs">Janelas</p><p>Evolução de vendas, devoluções e taxa em 6 períodos (30d a 180d). Gráfico de linhas com eixo Y duplo. Identifica tendências sazonais.</p></div>
+            <div className="border-l-2 border-primary pl-3"><p className="text-foreground font-semibold text-xs">Matriz vs Full</p><p>Compara canal Matriz (estoque próprio) vs Full (Fulfillment do marketplace). Identifica se o problema é de qualidade ou logística.</p></div>
+            <div className="border-l-2 border-primary pl-3"><p className="text-foreground font-semibold text-xs">Frete</p><p>Análise por forma de entrega. Identifica qual método de envio gera mais devoluções.</p></div>
+            <div className="border-l-2 border-primary pl-3"><p className="text-foreground font-semibold text-xs">Motivos</p><p>Ranking dos principais motivos de devolução com categorização inteligente. Direciona ações: revisar anúncio, qualidade ou embalagem.</p></div>
+            <div className="border-l-2 border-primary pl-3"><p className="text-foreground font-semibold text-xs">Ads</p><p>Compara vendas orgânicas vs publicidade. Mostra se anúncios pagos trazem mais devoluções.</p></div>
+            <div className="border-l-2 border-primary pl-3"><p className="text-foreground font-semibold text-xs">Anúncios</p><p>Ranking completo por Score de Risco. Alterne entre SKU e MLB (código do anúncio).</p></div>
+            <div className="border-l-2 border-primary pl-3"><p className="text-foreground font-semibold text-xs flex items-center gap-1"><Calculator className="h-3 w-3" /> Simulador</p><p>Slider interativo para projetar economia ao reduzir X% das devoluções. Calcula nova taxa e ganho financeiro.</p></div>
+            <div className="border-l-2 border-primary pl-3"><p className="text-foreground font-semibold text-xs">IA Anúncios</p><p>Cole a URL de um anúncio do Mercado Livre e receba diagnóstico inteligente com sugestões de título, fotos, descrição e palavras-chave. <em>Exclusivo Mercado Livre.</em></p></div>
+            <div className="border-l-2 border-emerald pl-3"><p className="text-foreground font-semibold text-xs flex items-center gap-1"><Download className="h-3 w-3 text-emerald" /> Exportar Excel</p><p>Gera arquivo .xlsx com múltiplas abas (Resumo, Ranking SKUs, Motivos, Logística, Base) respeitando os filtros ativos.</p></div>
+            <div className="border-l-2 border-emerald pl-3"><p className="text-foreground font-semibold text-xs">Filtros Globais</p><p>Período (30-180d), Canal (Matriz/Full), Só Ads, Top 10 e Agrupar por (SKU/MLB). Todos os módulos respondem em tempo real.</p></div>
+            <div className="border-l-2 border-emerald pl-3"><p className="text-foreground font-semibold text-xs">Tema Claro/Escuro</p><p>Botão no topo da barra lateral para alternar o tema visual.</p></div>
+          </div>
         </>
       ),
     },
+
+    // 6. BOAS PRÁTICAS
     {
-      id: 'simulador',
-      icon: <Calculator className="h-4 w-4" />,
-      title: '8. Simulador de Economia',
+      id: 'best-practices',
+      icon: <Lightbulb className="h-4 w-4" />,
+      title: '6. Boas Práticas — Extraia o Máximo',
       content: (
         <>
-          <FormulaBox
-            formula="Economia Potencial = Impacto Financeiro Atual × (% de Redução Simulada ÷ 100)"
-            description="Quanto você economizaria se reduzisse X% das devoluções."
-          />
-          <FormulaBox
-            formula="Nova Taxa = Taxa Atual × (1 - % de Redução ÷ 100)"
-            description="Qual seria sua nova taxa de devolução após a redução simulada."
-          />
-          <p className="mt-2"><strong className="text-foreground">Exemplo prático:</strong></p>
-          <p>Taxa atual: 8% | Impacto: R$ 5.000<br/>
-          Simulando redução de 30%:<br/>
-          • Nova taxa: <span className="text-emerald font-mono">5,6%</span><br/>
-          • Economia: <span className="text-emerald font-mono">R$ 1.500</span></p>
-        </>
-      ),
-    },
-    {
-      id: 'exportacao',
-      icon: <Download className="h-4 w-4" />,
-      title: '9. Exportação de Dados',
-      content: (
-        <>
-          <p>O botão <strong className="text-foreground">"Exportar Excel"</strong> na barra lateral gera um arquivo .xlsx completo com múltiplas abas:</p>
-          <ul className="list-disc list-inside space-y-1 mt-2">
-            <li><strong className="text-foreground">Resumo:</strong> Todos os KPIs e métricas calculadas</li>
-            <li><strong className="text-foreground">Ranking SKUs:</strong> Top 50 produtos por Score de Risco</li>
-            <li><strong className="text-foreground">Motivos:</strong> Ranking de motivos de devolução</li>
-            <li><strong className="text-foreground">Logística:</strong> Análise por forma de entrega</li>
-            <li><strong className="text-foreground">Base Vendas:</strong> Primeiras 2.000 linhas de vendas processadas</li>
-          </ul>
-          <p className="mt-2">O arquivo exportado respeita os filtros ativos — se você filtrou por Full nos últimos 30 dias, o Excel conterá apenas esses dados.</p>
-        </>
-      ),
-    },
-    {
-      id: 'dicas',
-      icon: <Target className="h-4 w-4" />,
-      title: '10. Dicas para Melhor Uso',
-      content: (
-        <>
-          <div className="space-y-2">
+          <p>Dicas práticas para tirar o melhor proveito da ferramenta e tomar decisões com base em dados:</p>
+          <div className="space-y-2 mt-2">
             <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
-              <p className="text-emerald font-bold text-xs">Comece pelo Resumo</p>
-              <p className="text-[10px]">Veja a visão geral e identifique os indicadores em "Atenção" ou "Crítico" para saber onde focar.</p>
+              <p className="text-emerald font-bold text-xs">1. Comece sempre pelo Resumo</p>
+              <p className="text-[10px]">Identifique rapidamente os indicadores em "Atenção" ou "Crítico" antes de mergulhar nos detalhes.</p>
             </div>
             <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
-              <p className="text-emerald font-bold text-xs">Use o filtro de Janela</p>
-              <p className="text-[10px]">Compare períodos curtos (30d) vs longos (180d) para identificar tendências e sazonalidade.</p>
+              <p className="text-emerald font-bold text-xs">2. Exporte 180 dias do marketplace</p>
+              <p className="text-[10px]">Sempre baixe o maior período possível. Você filtra janelas menores depois, mas precisa do histórico completo para detectar tendências.</p>
             </div>
             <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
-              <p className="text-emerald font-bold text-xs">Analise Matriz vs Full separadamente</p>
-              <p className="text-[10px]">Use o filtro de Canal para entender se os problemas vêm do seu estoque ou do Fulfillment.</p>
+              <p className="text-emerald font-bold text-xs">3. Compare janelas para ver tendências</p>
+              <p className="text-[10px]">Use o filtro de período (30d vs 180d) na aba Janelas para detectar se a taxa está subindo ou caindo.</p>
             </div>
             <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
-              <p className="text-emerald font-bold text-xs">Priorize pelo Score de Risco</p>
-              <p className="text-[10px]">Na aba Anúncios, foque nos SKUs com maior score — eles combinam alta frequência e alto impacto financeiro.</p>
+              <p className="text-emerald font-bold text-xs">4. Analise Matriz e Full separadamente</p>
+              <p className="text-[10px]">Problemas no Full geralmente são logísticos (embalagem, danos). Problemas na Matriz geralmente são de qualidade ou expectativa.</p>
             </div>
             <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
-              <p className="text-emerald font-bold text-xs">Simule antes de agir</p>
-              <p className="text-[10px]">Use o Simulador para estimar o retorno financeiro de reduzir devoluções antes de investir em ações corretivas.</p>
+              <p className="text-emerald font-bold text-xs">5. Priorize pelo Score de Risco</p>
+              <p className="text-[10px]">Score alto = combinação de muitas devoluções + alto valor. São os SKUs que pesam mais no caixa. Foque neles primeiro.</p>
+            </div>
+            <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
+              <p className="text-emerald font-bold text-xs">6. Leia os Motivos antes de agir</p>
+              <p className="text-[10px]">"Descrição não corresponde" → revise anúncio. "Defeito" → revise qualidade. "Danificado" → revise embalagem. Cada motivo direciona uma ação diferente.</p>
+            </div>
+            <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
+              <p className="text-emerald font-bold text-xs">7. Simule antes de investir</p>
+              <p className="text-[10px]">Use o Simulador para estimar o ROI de reduzir devoluções antes de gastar com ações corretivas (nova embalagem, novo fornecedor, etc.).</p>
+            </div>
+            <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
+              <p className="text-emerald font-bold text-xs">8. Use a IA Anúncios nos top 10 problemáticos</p>
+              <p className="text-[10px]">Para os anúncios com pior Score de Risco no Mercado Livre, peça diagnóstico da IA. Muitas devoluções vêm de título, fotos ou descrição mal feitos.</p>
+            </div>
+            <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
+              <p className="text-emerald font-bold text-xs">9. Faça análises semanais</p>
+              <p className="text-[10px]">Crie uma rotina: toda segunda-feira, baixe o relatório atualizado, processe e revise os indicadores. Pequenas correções constantes valem mais que grandes mudanças esporádicas.</p>
+            </div>
+            <div className="bg-emerald/10 border border-emerald/20 rounded-lg p-3">
+              <p className="text-emerald font-bold text-xs">10. Exporte e compartilhe</p>
+              <p className="text-[10px]">Use o Excel exportado em reuniões com fornecedores, equipe de qualidade ou time de marketing. Decisões baseadas em dados convencem mais.</p>
             </div>
           </div>
         </>
@@ -402,12 +376,12 @@ export function GuidePanel({ onClose }: { onClose: () => void }) {
             <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
               <BookOpen className="h-5 w-5 text-primary" /> Guia Completo
             </h2>
-            <p className="text-xs text-muted-foreground">Tudo sobre a ferramenta, métricas e como usar</p>
+            <p className="text-xs text-muted-foreground">Manual completo da ferramenta — Mercado Livre & Shopee</p>
           </div>
         </div>
 
-        {sections.map(s => (
-          <SectionAccordion key={s.id} section={s} />
+        {sections.map((s, i) => (
+          <SectionAccordion key={s.id} section={s} defaultOpen={i === 0} />
         ))}
       </div>
     </div>
