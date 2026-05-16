@@ -34,27 +34,6 @@ export function WelcomeScreen() {
           </div>
         </div>
 
-        <div className="glass-static p-5 text-left">
-          <div className="flex items-center gap-2 mb-3">
-            <Upload className="h-4 w-4 text-royal" />
-            <p className="text-xs font-semibold text-foreground">Como começar</p>
-          </div>
-          <ol className="space-y-2 text-xs text-muted-foreground">
-            <li className="flex gap-2">
-              <span className="font-mono text-emerald font-bold">1.</span>
-              <span>Faça upload do <strong className="text-foreground">Relatório de Vendas</strong> (.xlsx com aba "Vendas BR")</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="font-mono text-emerald font-bold">2.</span>
-              <span>Faça upload do <strong className="text-foreground">Relatório de Devoluções</strong> (.xlsx com abas "devoluções vendas matriz/full")</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="font-mono text-emerald font-bold">3.</span>
-              <span>Clique em <strong className="text-foreground">Processar Arquivos</strong> e explore os módulos de análise</span>
-            </li>
-          </ol>
-        </div>
-
         <div className="mt-4 flex items-center justify-center gap-1">
           <Zap className="h-3 w-3 text-amber" />
           <p className="text-[10px] text-muted-foreground">Use a barra lateral para fazer upload dos arquivos</p>
