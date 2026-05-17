@@ -6,3 +6,9 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[headers]]
+  for = "/version.json"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "no-store"
