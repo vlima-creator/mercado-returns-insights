@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { generateAnalysisPdf } from '@/lib/pdfAnalise';
+import { InfoTooltip } from '@/components/InfoTooltip';
 
 export function TabAnaliseAnuncios() {
   const [url, setUrl] = useState('');
