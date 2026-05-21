@@ -1,6 +1,7 @@
 import { useAppData } from '@/context/AppContext';
 import { analisarFrete } from '@/lib/analises';
 import { formatBRL, formatNumber } from '@/lib/formatacao';
+import { InfoTooltip } from '@/components/InfoTooltip';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function TabFrete() {
@@ -21,7 +22,15 @@ export function TabFrete() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="glass-static p-6">
-        <h3 className="text-sm font-semibold text-foreground mb-4">Desempenho por Forma de Entrega</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          Desempenho por Forma de Entrega
+          <InfoTooltip
+            title="Desempenho por Forma de Entrega"
+            description="Vendas e devoluções agrupadas pela modalidade de envio usada (Full, Flex, Coleta, Agência, etc.)."
+            calculation="Agrupa os pedidos pela coluna de forma de entrega e soma vendas, devoluções, taxa e impacto financeiro de cada modalidade."
+            meaning="Identifica modalidades com taxa anormal de devolução — pode indicar problema logístico (extravio, atraso) ou de embalagem."
+          />
+        </h3>
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} layout="vertical">
@@ -37,7 +46,15 @@ export function TabFrete() {
       </div>
 
       <div className="glass-static p-6">
-        <h3 className="text-sm font-semibold text-foreground mb-4">Detalhamento</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          Detalhamento
+          <InfoTooltip
+            title="Detalhamento por Frete"
+            description="Tabela com os números absolutos de vendas, devoluções, taxa % e impacto financeiro por modalidade."
+            calculation="Taxa = (Devoluções ÷ Vendas) × 100. Impacto = prejuízo financeiro estimado das devoluções daquela modalidade."
+            meaning="Use para decidir se vale migrar volume de uma modalidade problemática para outra mais saudável."
+          />
+        </h3>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>

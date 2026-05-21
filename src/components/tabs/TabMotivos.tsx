@@ -1,5 +1,6 @@
 import { useAppData } from '@/context/AppContext';
 import { analisarMotivos } from '@/lib/analises';
+import { InfoTooltip } from '@/components/InfoTooltip';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function TabMotivos() {
@@ -20,7 +21,15 @@ export function TabMotivos() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="glass-static p-6">
-        <h3 className="text-sm font-semibold text-foreground mb-4">Top 10 Motivos de Devolução</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          Top 10 Motivos de Devolução
+          <InfoTooltip
+            title="Top 10 Motivos"
+            description="Os 10 motivos mais frequentes declarados pelo comprador ao solicitar a devolução."
+            calculation="Agrupa todas as devoluções pelo campo de motivo informado pelo canal e ordena por quantidade decrescente."
+            meaning="Identifica padrão: motivos como 'não corresponde à descrição' apontam anúncio ruim; 'produto com defeito' aponta qualidade/fornecedor."
+          />
+        </h3>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} layout="vertical">
@@ -41,7 +50,15 @@ export function TabMotivos() {
       </div>
 
       <div className="glass-static p-6">
-        <h3 className="text-sm font-semibold text-foreground mb-4">Todos os Motivos</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          Todos os Motivos
+          <InfoTooltip
+            title="Todos os Motivos"
+            description="Lista completa de motivos com quantidade e percentual sobre o total de devoluções."
+            calculation="% = (Quantidade do motivo ÷ Total de devoluções) × 100."
+            meaning="Visão exaustiva para encontrar motivos de baixa frequência mas alto impacto (ex: produto com defeito grave)."
+          />
+        </h3>
         <div className="overflow-x-auto max-h-96 overflow-y-auto">
           <table className="w-full text-xs">
             <thead className="sticky top-0 bg-card">

@@ -1,4 +1,4 @@
 {
-  "version": "1.1.0",
-  "whatsNew": "Adicionado pop-up \"O que há de novo\" no app: a cada nova versão publicada, os usuários veem automaticamente as novidades ao abrir a ferramenta. Integrado também ao Hub Analytical X."
+  "version": "1.2.0",
+  "whatsNew": "Adicionados overlays informativos (ícone ℹ️) em todos os cards e seções do app. Cada overlay explica o que é a métrica, como é calculada e o que ela representa na operação — facilitando o entendimento para novos usuários."
 }

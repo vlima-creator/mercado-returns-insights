@@ -1,6 +1,7 @@
 import { useAppData } from '@/context/AppContext';
 import { analisarSkus } from '@/lib/analises';
 import { formatBRL, formatNumber } from '@/lib/formatacao';
+import { InfoTooltip } from '@/components/InfoTooltip';
 import { ArrowUpDown } from 'lucide-react';
 import { useState } from 'react';
 
@@ -43,18 +44,42 @@ export function TabSkus() {
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-4">
         <div className="glass-static p-4">
-          <p className="text-xs text-muted-foreground">Anúncios com Devolução</p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-xs text-muted-foreground">Anúncios com Devolução</p>
+            <InfoTooltip
+              title="Anúncios com Devolução"
+              description="Quantos anúncios únicos (SKU ou MLB) registraram pelo menos 1 devolução no período."
+              calculation="Count distinct de SKU/MLB onde devoluções > 0."
+              meaning="Quanto menor esse número, mais concentrado é o problema — facilita ação direcionada."
+            />
+          </div>
           <p className="text-2xl font-bold text-foreground">{formatNumber(totalAnunciosComDevolucao)}</p>
         </div>
         <div className="glass-static p-4">
-          <p className="text-xs text-muted-foreground">Concentração Top 10</p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-xs text-muted-foreground">Concentração Top 10</p>
+            <InfoTooltip
+              title="Concentração Top 10"
+              description="% das devoluções totais que estão concentradas apenas nos 10 piores anúncios."
+              calculation="(Devoluções dos top 10 piores ÷ Total de devoluções) × 100."
+              meaning="Aplicação do Pareto: se > 60%, atacar só os top 10 já corrige metade do problema."
+            />
+          </div>
           <p className="text-2xl font-bold text-coral">{taxaConcentracao.toFixed(1)}%</p>
           <p className="text-xs text-muted-foreground mt-1">{formatNumber(top10Devolucoes)} de {formatNumber(totalDevolucoes)} devoluções</p>
         </div>
       </div>
 
       <div className="glass-static p-6">
-        <h3 className="text-sm font-semibold text-foreground mb-4">Ranking de Anúncios por Risco ({label})</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          Ranking de Anúncios por Risco ({label})
+          <InfoTooltip
+            title="Ranking por Risco"
+            description="Ordena anúncios pelo Score de Risco — combinação de volume, taxa de devolução e impacto financeiro."
+            calculation="Score = taxa de devolução × volume × peso de impacto. Score ≥ 500 = crítico, 100-500 = atenção, < 100 = saudável."
+            meaning="Diferente de ordenar só por taxa: prioriza anúncios que realmente movem o ponteiro (alto volume + alta taxa)."
+          />
+        </h3>
         <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
           <table className="w-full text-xs">
             <thead className="sticky top-0 bg-card z-10">
