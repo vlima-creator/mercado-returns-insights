@@ -1,4 +1,5 @@
 import { LucideIcon } from 'lucide-react';
+import { InfoTooltip } from '@/components/InfoTooltip';
 
 interface MetricCardProps {
   label: string;
@@ -6,9 +7,14 @@ interface MetricCardProps {
   subvalue?: string;
   icon: LucideIcon;
   variant?: 'default' | 'success' | 'danger' | 'info' | 'warning';
+  info?: {
+    description: string;
+    calculation?: string;
+    meaning?: string;
+  };
 }
 
-export function MetricCard({ label, value, subvalue, icon: Icon, variant = 'default' }: MetricCardProps) {
+export function MetricCard({ label, value, subvalue, icon: Icon, variant = 'default', info }: MetricCardProps) {
   const colorClass = {
     default: 'text-foreground',
     success: 'text-emerald',
@@ -30,9 +36,19 @@ export function MetricCard({ label, value, subvalue, icon: Icon, variant = 'defa
       <div className={`absolute top-3 right-3 p-2 rounded-lg ${glowClass}`}>
         <Icon className={`h-5 w-5 ${colorClass} opacity-60 group-hover:opacity-100 transition-opacity`} />
       </div>
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-        {label}
-      </p>
+      <div className="flex items-center gap-1.5 mb-2">
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          {label}
+        </p>
+        {info && (
+          <InfoTooltip
+            title={label}
+            description={info.description}
+            calculation={info.calculation}
+            meaning={info.meaning}
+          />
+        )}
+      </div>
       <p className={`text-2xl font-bold ${colorClass} font-mono`}>
         {value}
       </p>
