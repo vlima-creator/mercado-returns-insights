@@ -145,6 +145,12 @@ export function TabAnaliseAnuncios() {
         <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
           <Search className="h-4 w-4 text-royal" />
           Análise de Anúncio com IA
+          <InfoTooltip
+            title="Análise de Anúncio com IA"
+            description="Diagnóstico automático de um anúncio do Mercado Livre usando IA generativa."
+            calculation="A IA lê título, descrição, fotos, preço e ficha técnica e gera 6 seções: SEO/Título, Preço, Conteúdo, Imagens, Reputação e Recomendações."
+            meaning="Acelera a auditoria de anúncios — encontra em segundos pontos que normalmente levam horas para revisar manualmente."
+          />
         </h3>
         <p className="text-xs text-muted-foreground mb-4">
           Cole a URL de um anúncio do Mercado Livre para receber diagnóstico completo com 6 seções de análise gerado por IA.

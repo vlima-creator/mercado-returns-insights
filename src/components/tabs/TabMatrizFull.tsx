@@ -2,6 +2,7 @@ import { useAppData } from '@/context/AppContext';
 import { calcularMetricas } from '@/lib/metricas';
 import { aplicarFiltros } from '@/lib/filters';
 import { formatBRL, formatPercent, formatNumber } from '@/lib/formatacao';
+import { InfoTooltip } from '@/components/InfoTooltip';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 export function TabMatrizFull() {
@@ -23,7 +24,15 @@ export function TabMatrizFull() {
     <div className="space-y-6 animate-fade-in">
       <div className="grid grid-cols-2 gap-4">
         <div className="glass-static p-5">
-          <h3 className="text-sm font-semibold text-emerald mb-3">Canal Matriz</h3>
+          <h3 className="text-sm font-semibold text-emerald mb-3 flex items-center gap-2">
+            Canal Matriz
+            <InfoTooltip
+              title="Canal Matriz"
+              description="Vendas enviadas diretamente do seu estoque (envio próprio / sem Mercado Envios Full)."
+              calculation="Filtra pedidos cuja modalidade de envio NÃO seja Full e calcula vendas, devoluções, taxa, faturamento e impacto."
+              meaning="Maior controle sobre logística, mas tipicamente entrega mais lenta e taxa de devolução diferente do Full."
+            />
+          </h3>
           <div className="space-y-2 text-xs">
             <div className="flex justify-between"><span className="text-muted-foreground">Vendas</span><span className="font-mono">{formatNumber(mMatriz.vendas)}</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Devoluções</span><span className="font-mono">{formatNumber(mMatriz.devolucoesVendas)}</span></div>
@@ -34,7 +43,15 @@ export function TabMatrizFull() {
         </div>
 
         <div className="glass-static p-5">
-          <h3 className="text-sm font-semibold text-royal mb-3">Canal Full</h3>
+          <h3 className="text-sm font-semibold text-royal mb-3 flex items-center gap-2">
+            Canal Full
+            <InfoTooltip
+              title="Canal Full"
+              description="Vendas despachadas pelo centro de distribuição do Mercado Livre (Mercado Envios Full)."
+              calculation="Filtra pedidos com modalidade de envio Full e calcula vendas, devoluções, taxa, faturamento e impacto."
+              meaning="Entrega mais rápida e maior visibilidade nos anúncios, mas custos de armazenagem e taxa de devolução costumam ser diferentes."
+            />
+          </h3>
           <div className="space-y-2 text-xs">
             <div className="flex justify-between"><span className="text-muted-foreground">Vendas</span><span className="font-mono">{formatNumber(mFull.vendas)}</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Devoluções</span><span className="font-mono">{formatNumber(mFull.devolucoesVendas)}</span></div>
@@ -46,7 +63,15 @@ export function TabMatrizFull() {
       </div>
 
       <div className="glass-static p-6">
-        <h3 className="text-sm font-semibold text-foreground mb-4">Comparação Matriz vs Full</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          Comparação Matriz vs Full
+          <InfoTooltip
+            title="Comparação Matriz vs Full"
+            description="Confronto lado a lado de vendas e devoluções entre os dois canais."
+            calculation="Mesmas métricas dos cards acima, plotadas em barras agrupadas para comparação visual rápida."
+            meaning="Identifica qual canal tem melhor performance: se Full tem mais vendas mas também mais devoluções, avalie se o custo extra compensa."
+          />
+        </h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={comparison}>

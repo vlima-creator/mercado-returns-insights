@@ -1,6 +1,7 @@
 import { useAppData } from '@/context/AppContext';
 import { analisarAds } from '@/lib/analises';
 import { formatBRL, formatNumber } from '@/lib/formatacao';
+import { InfoTooltip } from '@/components/InfoTooltip';
 import { Megaphone, Leaf } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
@@ -19,6 +20,16 @@ export function TabAds() {
           <div key={ad.tipo} className="glass-static p-5">
             <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${ad.tipo === 'Publicidade' ? 'text-amber-brand' : 'text-emerald'}`}>
               {ad.tipo === 'Publicidade' ? <><Megaphone className="h-4 w-4" /> Publicidade (Ads)</> : <><Leaf className="h-4 w-4" /> Orgânico</>}
+              <InfoTooltip
+                title={ad.tipo === 'Publicidade' ? 'Vendas com Ads' : 'Vendas Orgânicas'}
+                description={ad.tipo === 'Publicidade'
+                  ? 'Pedidos originados de cliques em anúncios pagos (Product Ads).'
+                  : 'Pedidos vindos de busca natural, posição orgânica ou tráfego direto.'}
+                calculation="Vendas, devoluções, taxa e impacto somados dos pedidos classificados nessa origem pelo relatório do canal."
+                meaning={ad.tipo === 'Publicidade'
+                  ? 'Mede a saúde do investimento em mídia paga — devolução alta corrói o ROAS.'
+                  : 'Base saudável da operação — alta proporção orgânica indica relevância do anúncio sem precisar pagar tráfego.'}
+              />
             </h3>
             <div className="space-y-2 text-xs">
               <div className="flex justify-between"><span className="text-muted-foreground">Vendas</span><span className="font-mono">{formatNumber(ad.vendas)}</span></div>
@@ -32,7 +43,15 @@ export function TabAds() {
       </div>
 
       <div className="glass-static p-6">
-        <h3 className="text-sm font-semibold text-foreground mb-4">Comparação Orgânico vs Ads</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          Comparação Orgânico vs Ads
+          <InfoTooltip
+            title="Orgânico vs Ads"
+            description="Comparativo visual de vendas e devoluções entre tráfego orgânico e pago."
+            calculation="Barras agrupadas com totais absolutos de cada origem (vendas e devoluções)."
+            meaning="Se Ads gera mais devolução proporcional que orgânico, indica que o anúncio pago atrai público errado — revisar palavras-chave."
+          />
+        </h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={adsData.map(a => ({ name: a.tipo, vendas: a.vendas, devolucoes: a.devolucoes }))}>

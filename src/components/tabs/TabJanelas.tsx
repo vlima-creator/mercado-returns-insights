@@ -2,6 +2,7 @@ import { useAppData } from '@/context/AppContext';
 import { calcularMetricas } from '@/lib/metricas';
 import { aplicarFiltros } from '@/lib/filters';
 import { formatBRL, formatPercent, formatNumber } from '@/lib/formatacao';
+import { InfoTooltip } from '@/components/InfoTooltip';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
@@ -26,7 +27,15 @@ export function TabJanelas() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="glass-static p-6">
-        <h3 className="text-sm font-semibold text-foreground mb-4">Vendas vs Devoluções por Período</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          Vendas vs Devoluções por Período
+          <InfoTooltip
+            title="Vendas vs Devoluções por Período"
+            description="Evolução de vendas, devoluções e taxa de devolução em janelas crescentes (30, 60, 90, 120, 150, 180 dias)."
+            calculation="Para cada janela, recalcula: Vendas no período, Devoluções vinculadas e Taxa = (Devoluções ÷ Vendas) × 100."
+            meaning="Mostra tendência: taxa subindo entre 30→180d indica piora recente; taxa caindo mostra melhoria."
+          />
+        </h3>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData}>
@@ -45,7 +54,15 @@ export function TabJanelas() {
       </div>
 
       <div className="glass-static p-6">
-        <h3 className="text-sm font-semibold text-foreground mb-4">Detalhamento por Janela</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          Detalhamento por Janela
+          <InfoTooltip
+            title="Detalhamento por Janela"
+            description="Tabela com os números absolutos por período de análise."
+            calculation="Mesmo cálculo do gráfico acima, apresentado em formato tabular para conferência exata."
+            meaning="Use para comparar valores específicos entre janelas e identificar o melhor recorte temporal de análise."
+          />
+        </h3>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
